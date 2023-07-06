@@ -13,19 +13,17 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  const isNotificationEnabled = ref(false);
-  const getIcon = () => {
-    return isNotificationEnabled.value
-      ? 'tabler-bell-ringing'
-      : 'tabler-bell-off';
-  };
+import { ref } from 'vue'
+const isNotificationEnabled = ref(false)
+const getIcon = () => {
+  return isNotificationEnabled.value ? 'tabler-bell-ringing' : 'tabler-bell-off'
+}
 
-  const getText = () => {
-    return isNotificationEnabled.value
-      ? 'Push Notifications are enabled. No need to do anything.'
-      : 'Please enable push notifications on your device.';
-  };
+const getText = () => {
+  return isNotificationEnabled.value
+    ? 'Push Notifications are enabled. No need to do anything.'
+    : 'Please enable push notifications on your device.'
+}
 </script>
 
 <style scoped></style>

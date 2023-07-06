@@ -8,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
-  defineProps<{
-    statusIcon: string;
-  }>();
+defineProps<{
+  statusIcon: string
+}>()
 </script>
 
 <style scoped></style>

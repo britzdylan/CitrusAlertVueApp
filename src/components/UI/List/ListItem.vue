@@ -8,12 +8,12 @@
 </template>
 
 <script setup lang="ts">
-  defineProps({
-    icon: {
-      type: String,
-      default: 'tabler-activity',
-    },
-  });
+defineProps({
+  icon: {
+    type: String,
+    default: 'tabler-activity'
+  }
+})
 </script>
 
 <style scoped></style>

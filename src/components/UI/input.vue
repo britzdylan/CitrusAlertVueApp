@@ -12,7 +12,8 @@
         :type="type"
         :disabled="disabled"
         :title="type"
-        :placeholder="placeholder" />
+        :placeholder="placeholder"
+      />
       <svg v-if="rIcon" width="24" height="24">
         <use :xlink:href="`/tabler-sprite.svg#tabler-${rIcon}`" />
       </svg>
@@ -25,60 +26,60 @@
 </template>
 
 <script setup lang="ts">
-  export interface InputProps {
-    label?: string;
-    placeholder?: string;
-    helper?: string;
-    type?: string;
-    disabled?: boolean;
-    state?: string;
-    lIcon?: string;
-    rIcon?: string;
-    prefix?: string;
-    suffix?: string;
-    modelValue?: string;
+export interface InputProps {
+  label?: string
+  placeholder?: string
+  helper?: string
+  type?: string
+  disabled?: boolean
+  state?: string
+  lIcon?: string
+  rIcon?: string
+  prefix?: string
+  suffix?: string
+  modelValue?: string
+}
+
+const props: InputProps = defineProps({
+  label: {
+    type: String
+  },
+  placeholder: {
+    type: String
+  },
+  helper: {
+    type: String
+  },
+  type: {
+    type: String,
+    default: 'text'
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  state: {
+    type: String,
+    default: 'none'
+  },
+  lIcon: {
+    type: String
+  },
+  rIcon: {
+    type: String
+  },
+  prefix: {
+    type: String
+  },
+  suffix: {
+    type: String
+  },
+  modelValue: {
+    type: String
   }
+})
 
-  const props: InputProps = defineProps({
-    label: {
-      type: String,
-    },
-    placeholder: {
-      type: String,
-    },
-    helper: {
-      type: String,
-    },
-    type: {
-      type: String,
-      default: 'text',
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    state: {
-      type: String,
-      default: 'none',
-    },
-    lIcon: {
-      type: String,
-    },
-    rIcon: {
-      type: String,
-    },
-    prefix: {
-      type: String,
-    },
-    suffix: {
-      type: String,
-    },
-    modelValue: {
-      type: String,
-    },
-  });
-
-  defineEmits(['update:modelValue']);
+defineEmits(['update:modelValue'])
 </script>
 
 <style scoped></style>

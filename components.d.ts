@@ -27,6 +27,7 @@ declare module 'vue' {
     Support: typeof import('./src/components/Popover/Support.vue')['default']
     SupportLink: typeof import('./src/components/Content/SupportLink.vue')['default']
     TextArea: typeof import('./src/components/UI/textArea.vue')['default']
+    Toast: typeof import('./src/components/UI/toast.vue')['default']
     UpdateApi: typeof import('./src/components/Popover/UpdateApi.vue')['default']
   }
 }

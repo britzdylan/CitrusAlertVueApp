@@ -1,5 +1,6 @@
 <template>
   <main class="main">
+    <Toast />
     <Steps v-if="popup == 'register-steps'" />
     <Confirm v-if="popup == 'confirm'" />
     <UpdateApi v-if="popup == 'update-api'" />

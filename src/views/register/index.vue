@@ -34,13 +34,15 @@ import { ref } from 'vue'
 import { useCrypto } from '@/composables/crypto'
 import { useStorage } from '@/composables/storage'
 import { useApi } from '@/composables/api'
+import { useToast } from '@/composables/toast'
 
 const router = useRouter()
 const { encrypt } = useCrypto()
 const { set } = useStorage()
 const { getData } = useApi()
+const { alert } = useToast()
 
-const api_key = ref(import.meta.env.VITE_API_KEY)
+const api_key = ref()
 const error = ref(false)
 const loading = ref(false)
 
@@ -51,6 +53,7 @@ const warning =
 const register = async () => {
   loading.value = true
   if (!api_key.value || api_key.value.length < 36) {
+    alert('Please enter a valid API key', 'error')
     error.value = true
     loading.value = false
     return
@@ -66,6 +69,8 @@ const register = async () => {
     }
     loading.value = false
   } catch (e) {
+    // @ts-ignore
+    alert(e, 'error')
     loading.value = false
   }
 }

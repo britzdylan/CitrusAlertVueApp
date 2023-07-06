@@ -1,5 +1,6 @@
 <template>
   <main class="main">
+    <Toast />
     <Steps v-if="popup == 'register-steps'" />
     <Support v-if="popup == 'support'" />
     <slot />

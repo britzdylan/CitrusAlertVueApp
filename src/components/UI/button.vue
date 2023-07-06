@@ -1,10 +1,11 @@
 <template>
-  <button :disabled="disabled || loading" class="btn">
-    <svg v-if="iconLeft" class="absolute left-1 top-6 bottom-1" width="36" height="36">
+  <button :disabled="disabled" :class="loading ? 'pointer-events-none' : ''" class="btn">
+    <svg v-if="iconLeft || loading" :class="loading ? 'animate-spin' : ''">
       <use :xlink:href="`/tabler-sprite.svg#tabler-${loading ? 'loader' : iconLeft}`" />
     </svg>
-    <slot />
-    <svg v-if="iconRight" class="absolute left-1 top-6 bottom-1" width="36" height="36">
+    <slot v-if="!loading" />
+    <p v-else>Please be patient...</p>
+    <svg v-if="iconRight">
       <use :xlink:href="`/tabler-sprite.svg#tabler-${iconRight}`" />
     </svg>
   </button>

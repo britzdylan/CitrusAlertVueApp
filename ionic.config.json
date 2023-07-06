@@ -1,0 +1,7 @@
+{
+  "name": "citrusalertvueapp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}

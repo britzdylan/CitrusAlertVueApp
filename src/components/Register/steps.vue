@@ -68,12 +68,32 @@ const currentStep = ref(props.PCurrentStep)
 
 onMounted(() => {
   steps.value[currentStep.value].busy = true
+  setTimeout(() => {
+    currentStep.value++
+  }, 1000)
 })
 
 const nextStep = (value: number) => {
-  steps.value[value - 1].completed = true
-  steps.value[value].busy = true
-  // currentStep.value++;
+  if (value > steps.value.length) {
+    return
+  }
+  if (value > 1) {
+    steps.value[value - 1].completed = true
+  } else {
+    steps.value[0].completed = true
+  }
+
+  if (value === steps.value.length) {
+    setTimeout(() => {
+      router.push({ name: 'notifications' })
+    }, 1000)
+    return
+  } else {
+    steps.value[value].busy = true
+    setTimeout(() => {
+      currentStep.value++
+    }, 1000)
+  }
 }
 
 const getItemIcon = (index: number) => {
@@ -103,7 +123,8 @@ const getStepClass = (index: number) => {
 watch(
   currentStep,
   async (newVal, oldVal) => {
-    if (oldVal && newVal > oldVal && newVal <= steps.value.length) {
+    if (newVal <= steps.value.length) {
+      console.log('Watching steps - newVal', newVal)
       nextStep(newVal)
     }
   },

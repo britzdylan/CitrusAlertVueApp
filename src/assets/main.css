@@ -1,0 +1,57 @@
+/* import tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* your custom css */
+  #__nuxt,
+  body {
+    @apply bg-zinc-50 flex flex-col min-h-screen text-zinc-700;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold text-zinc-800;
+  }
+}
+
+@layer components {
+  /* your custom css */
+  .nuxt-link-exact-active {
+    @apply text-zinc-500;
+  }
+
+  .nuxt-link-active {
+    @apply text-zinc-500;
+  }
+
+  .nuxt-link {
+    @apply text-zinc-500;
+  }
+
+  .main {
+    @apply flex flex-col flex-1;
+  }
+
+  .screen {
+    @apply flex flex-col items-center flex-grow px-4 pb-8 overflow-x-hidden;
+  }
+
+  .card {
+    @apply bg-white border border-zinc-200 rounded-lg p-6 flex flex-col;
+  }
+}
+
+@layer utilities {
+  /* your custom css */
+  .iconSpin {
+    & svg {
+      @apply animate-spin;
+    }
+  }
+}

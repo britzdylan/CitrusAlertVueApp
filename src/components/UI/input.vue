@@ -8,7 +8,7 @@
       </svg>
       <input
         :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
         :type="type"
         :disabled="disabled"
         :title="type"

@@ -24,7 +24,8 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SalesCard: typeof import('./src/components/Sales/SalesCard.vue')['default']
     Steps: typeof import('./src/components/Register/steps.vue')['default']
-    Support: typeof import('./src/components/Content/Support.vue')['default']
+    Support: typeof import('./src/components/Popover/Support.vue')['default']
+    SupportLink: typeof import('./src/components/Content/SupportLink.vue')['default']
     TextArea: typeof import('./src/components/UI/textArea.vue')['default']
     UpdateApi: typeof import('./src/components/Popover/UpdateApi.vue')['default']
   }

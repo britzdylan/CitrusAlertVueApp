@@ -18,7 +18,7 @@
         <use xlink:href="/tabler-sprite.svg#tabler-brand-twitter" />
       </svg>
     </a>
-    <Support class="text-white" />
+    <SupportLink class="text-white" />
     <small>Please rate our app</small>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <section class="screen items-start">
-    <header class="relative px-4 gap-4 flex items-center justify-center w-full h-10 mb-8">
-      <svg class="absolute left-1 top-1 bottom-1" @click="router.back()" width="36" height="36">
+    <header class="relative px-4 gap-4 flex items-center justify-center w-full h-20 mb-8">
+      <svg class="absolute left-1 top-6 bottom-1" @click="router.back()" width="36" height="36">
         <use xlink:href="/tabler-sprite.svg#tabler-chevron-left" />
       </svg>
       <p class="text-body-lg font-bold text-center mx-auto">
@@ -30,7 +30,7 @@
       {{ warning }}
     </p>
     <Footer>
-      <Support class="text-center mx-auto mb-8" />
+      <SupportLink class="text-center mx-auto mb-8" />
       <button @click="register" class="btn btn-primary w-full">Submit</button>
     </Footer>
   </section>

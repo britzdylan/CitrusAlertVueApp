@@ -1,6 +1,7 @@
 <template>
   <main class="main">
     <Steps v-if="popup == 'register-steps'" />
+    <Support v-if="popup == 'support'" />
     <slot />
   </main>
 </template>

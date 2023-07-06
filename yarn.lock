@@ -57,10 +57,25 @@
   dependencies:
     tslib "^2.1.0"
 
+"@capacitor/dialog@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@capacitor/dialog/-/dialog-5.0.5.tgz#8ecbc583ce68dc17f1a691c597c682c1916258a6"
+  integrity sha512-JceQtnnoT4yNdTCodNHZCJCRRft3QXryhn3hY/4wzkFczyPlu+ETCDEAFTRRfvrK2AbkAS2F28W3o55y0Rq88w==
+
 "@capacitor/ios@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-5.1.0.tgz#d7de79fb089f5d0e573a1a251a2a65e980546156"
   integrity sha512-OMXYrIzfb6bSY3M6xkamGr3W+nRQ3rvfEVTlV1ruCNNBWnYn+eFNyM1SLbscMrKOrI6MoUN0IMv5oUNZzLnNxA==
+
+"@capacitor/preferences@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@capacitor/preferences/-/preferences-5.0.5.tgz#313490a4ed4f9e17f74181519f93b3f481717862"
+  integrity sha512-SPdmfsfKayWvQ0LV6F5c7v9G4iXD0LK0qeDMM/7rqIb+AD3JYdEd92JcXb/huG+SgD0iDGsvSOllEF+W2qQc7g==
+
+"@capacitor/toast@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@capacitor/toast/-/toast-5.0.5.tgz#aa10e15d2e74c41bc30bfc5dcef9661818233cfb"
+  integrity sha512-yRpNb/xhPNnlIH1Y5Vs00hkJDRlGiOdz7s0Y+cyvJG/C+q3XMdtHukJAjO4kxqq/mgBFBZhs5TuT5MWVW/sS/w==
 
 "@esbuild/android-arm64@0.17.19":
   version "0.17.19"
@@ -383,6 +398,11 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@tsconfig/node18/-/node18-2.0.1.tgz#2d2e11333ef2b75a4623203daca264e6697d693b"
   integrity sha512-UqdfvuJK0SArA2CxhKWwwAWfnVSXiYe63bVpMutc27vpngCntGUZQETO24pEJ46zU6XM+7SpqYoMgcO3bM11Ew==
+
+"@types/crypto-js@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@types/crypto-js/-/crypto-js-4.1.1.tgz#602859584cecc91894eb23a4892f38cfa927890d"
+  integrity sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==
 
 "@types/estree@^1.0.0":
   version "1.0.1"
@@ -964,6 +984,11 @@ cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-js@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
 
 cssesc@^3.0.0:
   version "3.0.0"

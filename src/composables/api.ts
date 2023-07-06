@@ -1,6 +1,6 @@
-import { useStorage } from 'storage'
-import { useCrypto } from 'crypto'
-export async function useApi() {
+import { useStorage } from './storage'
+import { useCrypto } from './crypto'
+export function useApi() {
   const { get } = useStorage()
   const { decrypt } = useCrypto()
 
@@ -10,9 +10,11 @@ export async function useApi() {
     'Content-Type': 'application/vnd.api+json'
   }
   // use fetch to get data from the API
-  const get = async (endPoint: string) => {
+  const getData = async (endPoint: string): Promise<any> => {
+    // @ts-ignore
     const encryptedKey = await get('api_key')
-    const token = await decrypt(encryptedKey, 'secret')
+    if (!encryptedKey) throw new Error('No API key found')
+    const token = await decrypt(encryptedKey, import.meta.env.VITE_SECRET)
     const url = `${base_url}/${endPoint}`
 
     const response = await fetch(url, {
@@ -21,19 +23,5 @@ export async function useApi() {
     return await response.json()
   }
 
-  // use fetch to post data to the API
-  const post = async (endPoint: string, data: any) => {
-    const encryptedKey = await get('api_key')
-    const token = await decrypt(encryptedKey, 'secret')
-    const url = `${base_url}/${endPoint}`
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { ...header, Authorization: `Bearer ${token}` },
-      body: JSON.stringify(data)
-    })
-    return await response.json()
-  }
-
-  return { get, post }
+  return { getData }
 }

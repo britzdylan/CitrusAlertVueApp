@@ -12,7 +12,7 @@
       <Input
         v-model="api_key"
         label="Your Lemon Squeezy API key"
-        type="password"
+        type="text"
         class="items-start mt-8 mx-auto w-full"
         placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
         :helper="warning"
@@ -31,27 +31,43 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { useCrypto } from '@/composables/crypto'
+import { useStorage } from '@/composables/storage'
+import { useApi } from '@/composables/api'
 
 const router = useRouter()
-const api_key = ref('')
-const subTitle = 'Create your account'
-const warning =
-  'Please note that your API key is top secret and we take extra precautions to keep it safe. Do not share it with anyone.'
+const { encrypt } = useCrypto()
+const { set } = useStorage()
+const { getData } = useApi()
+
+const api_key = ref(import.meta.env.VITE_API_KEY)
 const error = ref(false)
 const loading = ref(false)
 
-const register = () => {
+const subTitle = 'Create your account'
+const warning =
+  'Please note that your API key is top secret and we take extra precautions to keep it safe. Do not share it with anyone.'
+
+const register = async () => {
   loading.value = true
   if (!api_key.value || api_key.value.length < 36) {
     error.value = true
     loading.value = false
     return
   }
-  // TODO
-  // encrypt API key
-  // save api key to local storage
-  // add api key to axios header
-  // run setup function
+  try {
+    const encrypted = await encrypt(api_key.value, import.meta.env.VITE_SECRET)
+    await set('api_key', encrypted)
+    const { data } = await getData('users/me')
+    if (data) {
+      router.push('/notifications')
+    } else {
+      throw new Error('Invalid API key')
+    }
+    loading.value = false
+  } catch (e) {
+    loading.value = false
+  }
 }
 </script>
 

@@ -1,7 +1,7 @@
 import { Preferences } from '@capacitor/preferences'
 
 export function useStorage() {
-  const get = async (key: string) => {
+  const get = async (key: string): Promise<string | null> => {
     const { value } = await Preferences.get({ key })
     return value
   }

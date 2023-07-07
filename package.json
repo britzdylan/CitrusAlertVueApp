@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "app": "SET HOST=172.20.104.134&&SET APP=true&&vite",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",

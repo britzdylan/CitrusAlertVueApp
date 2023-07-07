@@ -24,17 +24,20 @@ export function useToast() {
     toast.classList.add(getToastColorClass(type))
     toastText.innerText = text
     toast.dataset.show = 'true'
+    toast.classList.add('translate-y-8')
 
     if (dismiss) {
       toastIcon.classList.remove('hidden')
       toastIcon.addEventListener('click', () => {
         toast.dataset.show = 'false'
+        toast.classList.remove('translate-y-8')
       })
     }
 
     if (!dismiss) {
       setTimeout(() => {
         toast.dataset.show = 'false'
+        toast.classList.remove('translate-y-8')
       }, 3000)
     }
   }

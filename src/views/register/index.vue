@@ -29,20 +29,17 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
-import { useCrypto } from '@/composables/crypto'
-import { useStorage } from '@/composables/storage'
-import { useApi } from '@/composables/api'
+import { useCitrus } from '@/composables/citrus'
 import { useToast } from '@/composables/toast'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const { encrypt } = useCrypto()
-const { set } = useStorage()
-const { getData } = useApi()
-const { alert } = useToast()
 
-const api_key = ref()
+const { showToast } = useToast()
+const { runSetup } = useCitrus()
+// TODO fix this
+const api_key = ref(import.meta.env.VITE_API_KEY || '')
 const error = ref(false)
 const loading = ref(false)
 
@@ -53,25 +50,20 @@ const warning =
 const register = async () => {
   loading.value = true
   if (!api_key.value || api_key.value.length < 36) {
-    alert('Please enter a valid API key', 'error')
+    showToast('Please enter a valid API key', 'error')
     error.value = true
     loading.value = false
     return
   }
-  try {
-    const encrypted = await encrypt(api_key.value, import.meta.env.VITE_SECRET)
-    await set('api_key', encrypted)
-    const { data } = await getData('users/me')
-    if (data) {
-      router.push('/notifications')
-    } else {
-      throw new Error('Invalid API key')
-    }
+  let result = await runSetup(api_key.value)
+  if (result) {
+    setTimeout(() => {
+      router.replace('/notifications')
+    }, 1000)
+  } else {
+    error.value = true
     loading.value = false
-  } catch (e) {
-    // @ts-ignore
-    alert(e, 'error')
-    loading.value = false
+    showToast('Invalid API key please try again', 'error')
   }
 }
 </script>

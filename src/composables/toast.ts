@@ -16,7 +16,7 @@ export function useToast() {
     }
   }
 
-  const alert = (text: string, type?: toastType, dismiss?: boolean) => {
+  const showToast = (text: string, type?: toastType, dismiss?: boolean) => {
     const toast = document.getElementById('toast')
     const toastText = document.getElementById('toast-text')
     const toastIcon = document.getElementById('toast-dismiss')
@@ -41,5 +41,5 @@ export function useToast() {
       }, 3000)
     }
   }
-  return { alert }
+  return { showToast }
 }

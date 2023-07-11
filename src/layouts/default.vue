@@ -13,10 +13,21 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useLemonStore } from '@/stores/lemon'
 import { usePopup } from '@/composables/popup'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 const { popup } = usePopup()
-const route = useRoute()
+const store = useLemonStore()
+const { isAuthenticated } = storeToRefs(store)
+
+onMounted(async () => {
+  await store.getAllData()
+  if (!isAuthenticated) {
+    useRouter().push('/register')
+  }
+})
 </script>
 
 <style scoped></style>

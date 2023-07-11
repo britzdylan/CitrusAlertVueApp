@@ -15,7 +15,7 @@ export const useLemonStore = defineStore('Lemon', {
     stores: null,
     orders: null,
     subscriptions: null,
-    webhooks: null
+    webhooks: null,
     lastFetch: null
   }),
   getters: {

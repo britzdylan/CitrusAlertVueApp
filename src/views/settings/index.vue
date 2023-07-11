@@ -22,7 +22,7 @@
 import { ref } from 'vue'
 import { usePopup } from '@/composables/popup'
 const { showPopup } = usePopup()
-const isNotificationEnabled = ref(true)
+const isNotificationEnabled = ref(false)
 const key = ref('')
 const getIcon = () => {
   return isNotificationEnabled.value ? 'tabler-bell-ringing' : 'tabler-bell-off'

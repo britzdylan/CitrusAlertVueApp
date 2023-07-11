@@ -2,14 +2,14 @@ import { useCrypto } from '@/composables/crypto'
 import { useStorage } from '@/composables/storage'
 import { useToast } from '@/composables/toast'
 import { useApi } from '@/composables/api'
-import { useUserStore } from '@/stores/user'
+import { useLemonStore } from '@/stores/lemon'
 
 export function useCitrus() {
-  const { set } = useStorage()
+  const { set, get } = useStorage()
   const { encrypt } = useCrypto()
   const { showToast } = useToast()
   const { getData } = useApi()
-  const { fetchUser, fetchStores, fetchWebhooks, createWebhook, updateWebhook } = useUserStore()
+  const { fetchUser, fetchStores, fetchWebhooks, createWebhook, updateWebhook } = useLemonStore()
 
   const testKey = async (api_key: string) => {
     try {
@@ -69,15 +69,12 @@ export function useCitrus() {
 
   const runSetup = async () => {
     let res: any = await enableNotifications()
-    res = await fetchUser()
-    res = await fetchStores()
+    await fetchUser()
+    await fetchStores()
     // @ts-ignore
     res = await setupWebhooks(res[0].id)
     return res
-    // if key is valid, enable notifications
-    // if notifications are enabled, setup webhooks
-    // if webhooks are setup, get all user data
-    // if user data is fetched, get store data
   }
+
   return { runSetup, testKey }
 }

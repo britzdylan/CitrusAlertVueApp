@@ -37,7 +37,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const { showToast } = useToast()
-const { runSetup } = useCitrus()
+const { testKey } = useCitrus()
 // TODO fix this
 const api_key = ref(import.meta.env.VITE_API_KEY || '')
 const error = ref(false)
@@ -55,7 +55,7 @@ const register = async () => {
     loading.value = false
     return
   }
-  let result = await runSetup(api_key.value)
+  let result = await testKey(api_key.value)
   if (result) {
     setTimeout(() => {
       router.replace('/notifications')

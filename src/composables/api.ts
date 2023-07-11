@@ -5,7 +5,8 @@ export function useApi() {
   const { decrypt } = useCrypto()
 
   const base_url = import.meta.env.VITE_API_URL
-  const getHeaders = (endpoint: string) => {
+
+  const getToken = async (endPoint: string) => {
     const encryptedKey = await get('api_key')
     if (!encryptedKey) throw new Error('No API key found')
     const token = await decrypt(encryptedKey, import.meta.env.VITE_SECRET)
@@ -18,8 +19,7 @@ export function useApi() {
   }
   // use fetch to get data from the API
   const getData = async (endPoint: string): Promise<any> => {
-    // @ts-ignore
-    const { url, token } = getHeaders(endpoint)
+    const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
       headers: { ...header, Authorization: `Bearer ${token}` }
@@ -28,32 +28,30 @@ export function useApi() {
   }
 
   const updateData = async (endPoint: string, data: any): Promise<any> => {
-    // @ts-ignore
-    const { url, token } = getHeaders(endpoint)
+    const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
       method: 'PATCH',
       headers: { ...header, Authorization: `Bearer ${token}` },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ data: { ...data } })
     })
     return await response.json()
   }
 
   const postData = async (endPoint: string, data: any): Promise<any> => {
-    // @ts-ignore
-    const { url, token } = getHeaders(endpoint)
+    const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
       method: 'POST',
       headers: { ...header, Authorization: `Bearer ${token}` },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ data: { ...data } })
     })
     return await response.json()
   }
 
   const deleteData = async (endPoint: string): Promise<any> => {
     // @ts-ignore
-    const { url, token } = getHeaders(endpoint)
+    const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
       method: 'DELETE',
@@ -62,5 +60,5 @@ export function useApi() {
     return await response.json()
   }
 
-  return { getData, postData, deleteData }
+  return { getData, postData, deleteData, updateData }
 }

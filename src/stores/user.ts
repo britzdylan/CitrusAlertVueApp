@@ -80,20 +80,17 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  async function createWebhook(payload: WebhookAttributes) {
+  async function createWebhook(payload: WebhookAttributes, storeId: string) {
     const webhook = {
       type: 'webhooks',
       attributes: {
-        // ...payload,
-        url: import.meta.env.VITE_WEBHOOK_URL,
-        events: ['order_created', 'subscription_created'],
-        secret: import.meta.env.VITE_WEBHOOK_SECRET
+        ...payload
       },
       relationships: {
         store: {
           data: {
             type: 'stores',
-            id: '1'
+            id: storeId
           }
         }
       }
@@ -110,9 +107,24 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  async function updateWebhook(id: string) {
+  async function updateWebhook(id: string, payload: WebhookAttributes, storeId: string) {
+    const webhook = {
+      type: 'webhooks',
+      id: id,
+      attributes: {
+        ...payload
+      },
+      relationships: {
+        store: {
+          data: {
+            type: 'stores',
+            id: storeId
+          }
+        }
+      }
+    }
     try {
-      const { data } = await updateData(`webhooks/${id}`)
+      const { data } = await updateData(`webhooks/${id}`, webhook)
       if (!data) throw new Error('Error updating webhook or invalid api key')
       return data
     } catch (error) {

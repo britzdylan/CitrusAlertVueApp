@@ -102,3 +102,9 @@ export interface Store {
   id: string
   attributes: StoreAttributes
 }
+
+export interface WebhookAttributes {
+  url?: string
+  events?: string[]
+  secret?: string
+}

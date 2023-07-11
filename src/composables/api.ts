@@ -10,7 +10,7 @@ export function useApi() {
     const encryptedKey = await get('api_key')
     if (!encryptedKey) throw new Error('No API key found')
     const token = await decrypt(encryptedKey, import.meta.env.VITE_SECRET)
-    const url = `${base_url}/${endPoint}`
+    const url = `${base_url}/${endPoint}?page[size]=100`
     return { url, token }
   }
   const header = {
@@ -22,7 +22,8 @@ export function useApi() {
     const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
-      headers: { ...header, Authorization: `Bearer ${token}` }
+      headers: { ...header, Authorization: `Bearer ${token}` },
+      method: 'GET'
     })
     return await response.json()
   }

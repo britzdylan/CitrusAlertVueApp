@@ -1,3 +1,11 @@
+export interface Base {
+  type: string
+  id: string
+  relationships?: {
+    [key: string]: any
+  }
+}
+
 export interface OrderItem {
   id: number
   order_id: number
@@ -48,7 +56,7 @@ export interface OrderAttributes {
   updated_at: string
 }
 
-export interface Order {
+export interface Order extends Base {
   type: string
   id: string
   attributes: OrderAttributes

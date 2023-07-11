@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-8 w-full h-full p-3">
+  <div v-if="false" class="flex flex-col gap-8 w-full h-full p-3">
     <SalesCard
       v-for="item in sales"
       :key="item.order.id"

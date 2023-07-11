@@ -6,7 +6,12 @@ export interface Base {
   }
 }
 
-export interface OrderItem {
+export interface BaseAttributes {
+  updated_at: string
+  created_at: string
+}
+
+export interface OrderItem extends BaseAttributes {
   id: number
   order_id: number
   product_id: number
@@ -14,8 +19,6 @@ export interface OrderItem {
   product_name: string
   variant_name: string
   price: number
-  created_at: string
-  updated_at: string
   test_mode: boolean
 }
 
@@ -23,7 +26,7 @@ export interface Urls {
   receipt: string
 }
 
-export interface OrderAttributes {
+export interface OrderAttributes extends BaseAttributes {
   store_id: number
   customer_id: number
   identifier: string
@@ -52,17 +55,13 @@ export interface OrderAttributes {
   total_formatted: string
   first_order_item: OrderItem
   urls: Urls
-  created_at: string
-  updated_at: string
 }
 
 export interface Order extends Base {
-  type: string
-  id: string
   attributes: OrderAttributes
 }
 
-export interface CustomerAttributes {
+export interface UserAttributes extends BaseAttributes {
   store_id: number
   name: string
   email: string
@@ -76,18 +75,15 @@ export interface CustomerAttributes {
   country_formatted: string
   total_revenue_currency_formatted: string
   mrr_formatted: string
-  created_at: string
-  updated_at: string
+
   test_mode: boolean
 }
 
-export interface Customer {
-  type: string
-  id: string
-  attributes: CustomerAttributes
+export interface User extends Base {
+  attributes: UserAttributes
 }
 
-export interface StoreAttributes {
+export interface StoreAttributes extends BaseAttributes {
   name: string
   slug: string
   domain: string
@@ -101,18 +97,20 @@ export interface StoreAttributes {
   total_revenue: number
   thirty_day_sales: number
   thirty_day_revenue: number
-  created_at: string
-  updated_at: string
 }
 
-export interface Store {
-  type: string
-  id: string
+export interface Store extends Base {
   attributes: StoreAttributes
 }
 
-export interface WebhookAttributes {
-  url?: string
-  events?: string[]
-  secret?: string
+export interface WebhookAttributes extends BaseAttributes {
+  url: string
+  events: string[]
+  test_mode?: boolean = false
+  last_sent_at?: string
+  store_id: number
+}
+
+export interface Webhook extends Base {
+  attributes: WebhookAttributes
 }

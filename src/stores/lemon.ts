@@ -3,27 +3,38 @@ import { defineStore } from 'pinia'
 import { useApi } from '@/composables/api'
 import { useToast } from '@/composables/toast'
 import { useStorage } from '@/composables/storage'
-import type { WebhookAttributes } from '@/types'
+import type { WebhookAttributes, Order, User, Store } from '@/types'
 
 const { getData, postData, deleteData, updateData } = useApi()
 const { showToast } = useToast()
 const { get, set, remove } = useStorage()
 
+interface State {
+  user: User | null
+  stores: Store[] | null
+  orders: Order[] | []
+  subscriptions: Order[] | []
+  webhooks: Webhook[] | []
+  lastFetch: Date | null
+}
+
 export const useLemonStore = defineStore('Lemon', {
-  state: () => ({
-    user: null,
-    stores: null,
-    orders: null,
-    subscriptions: null,
-    webhooks: null,
-    lastFetch: null
-  }),
+  state: (): State => {
+    return {
+      user: null,
+      stores: null,
+      orders: [],
+      subscriptions: [],
+      webhooks: [],
+      lastFetch: null
+    }
+  },
   getters: {
     isAuthenticated: () => {
       return this?.user !== null
     },
-    allOrders: () => {
-      return this?.orders
+    allOrders: (state) => {
+      return state.orders
     },
     allSubscriptions: () => {
       return this?.subscriptions
@@ -57,8 +68,8 @@ export const useLemonStore = defineStore('Lemon', {
         this.fetchWebhooks()
       ])
       // @ts-ignore
-      let [user, stores, orders, subscriptions, webhooks] = data
-      let modeledData = {
+      const [user, stores, orders, subscriptions, webhooks] = data
+      const modeledData = {
         user,
         stores,
         orders,

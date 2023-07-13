@@ -41,7 +41,6 @@ const { showPopup } = usePopup()
 const getActiveTab = (cP: string) => {
   const { path } = route
   const activeTab = path.split('/')[1]
-  console.log(activeTab)
   return activeTab === cP ? 'active' : ''
 }
 </script>

@@ -11,6 +11,12 @@
       :tabs="['Products', 'Subscriptions']"
     />
     <RouterView />
+
+    <!-- <template v-else>
+      <div class="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    </template> -->
   </section>
 </template>
 
@@ -21,11 +27,8 @@ import { useLemonStore } from '@/stores/lemon'
 
 const store = useLemonStore()
 const router = useRouter()
-const activeTab = computed(() => (router.currentRoute.value.path === '/sales' ? 0 : 1))
 
-const navigate = (cP: number) => {
-  router.replace(cP === 0 ? '/sales' : '/sales/subscriptions')
-}
+const activeTab = computed(() => (router.currentRoute.value.path === '/sales' ? 0 : 1))
 
 const totalStores = computed(() => {
   let total = store.allStores?.stores?.length
@@ -38,6 +41,10 @@ const totalRevenue = computed(() => {
 
   return total ? (total.reduce((a, b) => a + b, 0) / 100).toFixed(2) : 0
 })
+
+const navigate = (cP: number) => {
+  router.replace(cP === 0 ? '/sales' : '/sales/subscriptions')
+}
 </script>
 
 <style scoped></style>

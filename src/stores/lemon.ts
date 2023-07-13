@@ -16,6 +16,7 @@ interface State {
   subscriptions: ApiResponse<Order[]> | null
   webhooks: ApiResponse<Webhook[]> | null
   lastFetch: Date | null
+  loading: boolean
 }
 
 export const useLemonStore = defineStore('Lemon', {
@@ -26,7 +27,8 @@ export const useLemonStore = defineStore('Lemon', {
       orders: null,
       subscriptions: null,
       webhooks: null,
-      lastFetch: null
+      lastFetch: null,
+      loading: false
     }
   },
   getters: {
@@ -67,15 +69,6 @@ export const useLemonStore = defineStore('Lemon', {
     }
   },
   actions: {
-    async updateLocalData(key: string, func: () => Promise<any>) {
-      const localData = await this.getLocalData()
-      if (!localData) {
-        await this.getAllData()
-      }
-
-      localData[key] = await func()
-      await set('citrus_data', JSON.stringify(localData))
-    },
     async getLocalData() {
       const localData = await get('citrus_data')
       if (localData) {

@@ -16,6 +16,7 @@ declare module 'vue' {
     Input: typeof import('./src/components/UI/input.vue')['default']
     List: typeof import('./src/components/UI/List/List.vue')['default']
     ListItem: typeof import('./src/components/UI/List/ListItem.vue')['default']
+    Loader: typeof import('./src/components/Content/Loader.vue')['default']
     More: typeof import('./src/components/Popover/More.vue')['default']
     Navbar: typeof import('./src/components/Layout/Navbar.vue')['default']
     Pill: typeof import('./src/components/UI/pill.vue')['default']

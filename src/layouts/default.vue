@@ -25,10 +25,12 @@ const { isAuthenticated } = storeToRefs(store)
 const loading = computed(() => store.loading)
 
 onMounted(async () => {
-  await store.getAllData()
+  await store.startLoading()
   if (!isAuthenticated) {
     useRouter().push('/register')
   }
+  await store.getAllData()
+  await store.stopLoading()
 })
 </script>
 

@@ -90,6 +90,10 @@ export const useLemonStore = defineStore('Lemon', {
         console.log('Fetching data from API')
         await remove('citrus_data')
         let modeledData = await this.refreshData()
+        Object.keys(modeledData).forEach((key) => {
+          // @ts-ignore
+          this[key] = modeledData[key]
+        })
         await set('citrus_data', JSON.stringify(modeledData))
         return true
       }
@@ -121,11 +125,6 @@ export const useLemonStore = defineStore('Lemon', {
         webhooks,
         lastFetch: new Date()
       }
-
-      Object.keys(modeledData).forEach((key) => {
-        // @ts-ignore
-        this[key] = data[key]
-      })
 
       return modeledData
     },
@@ -267,6 +266,14 @@ export const useLemonStore = defineStore('Lemon', {
         showToast(error, 'error')
         return null
       }
+    },
+    async startLoading() {
+      this.loading = true
+      return true
+    },
+    async stopLoading() {
+      this.loading = false
+      return true
     }
   }
 })

@@ -7,12 +7,12 @@
       </p>
       <slot>
         <div class="flex items-stretch gap-1">
-          <button @click="submit('close')" class="btn btn-min btn-min-zinc w-full">
+          <Button @click="submit('close')" class="btn btn-min btn-min-zinc w-full">
             {{ props.cancel }}
-          </button>
-          <button @click="submit('confirm')" class="btn btn-primary w-full">
+          </Button>
+          <Button @click="submit('confirm')" class="btn btn-primary w-full">
             {{ props.confirm }}
-          </button>
+          </Button>
         </div>
       </slot>
     </div>

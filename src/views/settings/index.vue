@@ -1,5 +1,5 @@
 <template>
-  <section class="screen gap-3">
+  <section class="screen gap-3 relative">
     <header class="relative px-4 gap-4 flex items-center justify-center w-full h-20">
       <p v class="text-body-lg font-bold text-center mx-auto">Account Settings</p>
     </header>
@@ -12,9 +12,11 @@
       helper="Your API key is top secret and we take extra precautions to keep it safe. Do not share it with anyone."
       placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
     />
-    <button @click="showPopup('update-api')" class="btn btn-primary w-full mt-auto">
-      Update my API key
-    </button>
+    <Footer class="!absolute left-0 right-0 mt-auto mb-20">
+      <Button @click="showPopup('update-api')" class="btn btn-primary w-full">
+        Update my API key
+      </Button>
+    </Footer>
   </section>
 </template>
 
@@ -23,16 +25,7 @@ import { ref } from 'vue'
 import { usePopup } from '@/composables/popup'
 const { showPopup } = usePopup()
 const isNotificationEnabled = ref(false)
-const key = ref('')
-const getIcon = () => {
-  return isNotificationEnabled.value ? 'tabler-bell-ringing' : 'tabler-bell-off'
-}
-
-const getText = () => {
-  return isNotificationEnabled.value
-    ? 'Push Notifications are enabled. No need to do anything.'
-    : 'Please enable push notifications on your device.'
-}
+const key = ref('&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;')
 </script>
 
 <style scoped></style>

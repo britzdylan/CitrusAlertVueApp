@@ -2,11 +2,11 @@
   <div
     class="bg-primary-600 py-8 px-4 gap-4 text-white flex flex-col fixed top-0 left-0 right-0 bottom-0 items-center justify-end z-50"
   >
-    <button @click="closePopup" class="btn btn-large btn-min text-white absolute top-2 right-2">
+    <Button @click="closePopup" class="btn btn-large btn-min text-white absolute top-2 right-2">
       <svg width="24" height="24">
         <use xlink:href="/tabler-sprite.svg#tabler-x" />
       </svg>
-    </button>
+    </Button>
     <img class="w-32 h-32" src="@/assets/logo_white.svg" />
     <a
       href="/"

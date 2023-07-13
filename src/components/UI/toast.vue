@@ -2,7 +2,7 @@
   <div
     id="toast"
     data-show="false"
-    class="toast fixed top-0 transition-all ease-out duration-300 left-2 right-2 w-auto justify-center shadow-light-600"
+    class="toast z-50 fixed top-0 transition-all ease-out duration-300 left-2 right-2 w-auto justify-center shadow-light-600"
   >
     <span id="toast-text" class="!mr-0">Notification</span>
     <!-- icon -->

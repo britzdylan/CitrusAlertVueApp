@@ -1,13 +1,13 @@
 <template>
   <section class="screen bg-zinc-50 gap-3 fixed top-0 right-0 left-0 bottom-0 z-50">
-    <button
+    <Button
       @click="closePopup"
       class="btn btn-large btn-min text-black absolute right-2 top-6 z-10"
     >
       <svg width="24" height="24">
         <use xlink:href="/tabler-sprite.svg#tabler-x" />
       </svg>
-    </button>
+    </Button>
     <header class="relative px-4 gap-4 flex items-center justify-center w-full h-20">
       <p class="text-body-lg font-bold">Support Centre</p>
     </header>

@@ -1,5 +1,6 @@
 import { useStorage } from './storage'
 import { useCrypto } from './crypto'
+import type { ApiResponse } from '../types'
 export function useApi() {
   const { get } = useStorage()
   const { decrypt } = useCrypto()
@@ -10,7 +11,7 @@ export function useApi() {
     const encryptedKey = await get('api_key')
     if (!encryptedKey) throw new Error('No API key found')
     const token = await decrypt(encryptedKey, import.meta.env.VITE_SECRET)
-    const url = `${base_url}/${endPoint}?page[size]=100`
+    const url = `${base_url}/${endPoint}`
     return { url, token }
   }
   const header = {
@@ -18,7 +19,7 @@ export function useApi() {
     'Content-Type': 'application/vnd.api+json'
   }
   // use fetch to get data from the API
-  const getData = async (endPoint: string): Promise<any> => {
+  const getData = async (endPoint: string): Promise<ApiResponse<any[]>> => {
     const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
@@ -28,7 +29,7 @@ export function useApi() {
     return await response.json()
   }
 
-  const updateData = async (endPoint: string, data: any): Promise<any> => {
+  const updateData = async (endPoint: string, data: any): Promise<ApiResponse<any[]>> => {
     const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
@@ -39,7 +40,7 @@ export function useApi() {
     return await response.json()
   }
 
-  const postData = async (endPoint: string, data: any): Promise<any> => {
+  const postData = async (endPoint: string, data: any): Promise<ApiResponse<any[]>> => {
     const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
@@ -50,7 +51,7 @@ export function useApi() {
     return await response.json()
   }
 
-  const deleteData = async (endPoint: string): Promise<any> => {
+  const deleteData = async (endPoint: string): Promise<ApiResponse<any[]>> => {
     // @ts-ignore
     const { url, token } = await getToken(endPoint)
 

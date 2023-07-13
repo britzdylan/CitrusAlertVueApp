@@ -10,7 +10,9 @@
       <h3 class="text-lg font-semibold truncate max-w-[300px] leading-tight">
         {{ attributes.first_order_item.product_name }}
       </h3>
-      <p class="text-sm text-zinc-400">store.attributes.name - #{{ attributes.order_number }}</p>
+      <p class="text-sm text-zinc-400">
+        {{ store.attributes.name }} - #{{ attributes.order_number }}
+      </p>
     </div>
     <div class="flex items-center gap-2">
       <p class="text-xs text-zinc-400">{{ attributes.user_name }} - {{ date }}</p>
@@ -19,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { type Order, type Customer, type Store } from '@/types'
+import type { Order } from '@/types'
 import { computed } from 'vue'
 import dayjs from 'dayjs'
 

@@ -1,30 +1,53 @@
-export interface Base {
-  type: string
-  id: string
-  relationships?: {
-    [key: string]: any
+// interfaces for the API responses
+
+interface Meta {
+  page: {
+    currentPage: number
+    from: number
+    lastPage: number
+    perPage: number
+    to: number
+    total: number
   }
 }
 
-export interface BaseAttributes {
-  updated_at: string
-  created_at: string
+interface Jsonapi {
+  version: string
 }
 
-export interface OrderItem extends BaseAttributes {
-  id: number
+interface Links {
+  first: string
+  last: string
+}
+
+// base interfaces
+interface Base<Type> {
+  type: string
+  id: string
+  attributes: Type
+  links: {
+    self: string
+  }
+}
+
+interface BaseAttributes {
+  updated_at: string
+  created_at: string
+  test_mode: boolean
+}
+
+// interface for items
+
+interface OrderItem extends BaseAttributes {
   order_id: number
   product_id: number
   variant_id: number
   product_name: string
   variant_name: string
   price: number
-  test_mode: boolean
 }
 
-export interface Urls {
-  receipt: string
-}
+// attributes interfaces
 
 export interface OrderAttributes extends BaseAttributes {
   store_id: number
@@ -35,6 +58,12 @@ export interface OrderAttributes extends BaseAttributes {
   user_email: string
   currency: string
   currency_rate: string
+  tax_name: string | null
+  tax_rate: string
+  status: string
+  status_formatted: string
+  refunded: boolean
+  refunded_at: null
   subtotal: number
   discount_total: number
   tax: number
@@ -43,25 +72,17 @@ export interface OrderAttributes extends BaseAttributes {
   discount_total_usd: number
   tax_usd: number
   total_usd: number
-  tax_name: string
-  tax_rate: string
-  status: string
-  status_formatted: string
-  refunded: boolean
-  refunded_at: null | string
   subtotal_formatted: string
   discount_total_formatted: string
   tax_formatted: string
   total_formatted: string
   first_order_item: OrderItem
-  urls: Urls
+  urls: {
+    receipt: string
+  }
 }
 
-export interface Order extends Base {
-  attributes: OrderAttributes
-}
-
-export interface UserAttributes extends BaseAttributes {
+interface UserAttributes extends BaseAttributes {
   store_id: number
   name: string
   email: string
@@ -75,15 +96,9 @@ export interface UserAttributes extends BaseAttributes {
   country_formatted: string
   total_revenue_currency_formatted: string
   mrr_formatted: string
-
-  test_mode: boolean
 }
 
-export interface User extends Base {
-  attributes: UserAttributes
-}
-
-export interface StoreAttributes extends BaseAttributes {
+interface StoreAttributes extends BaseAttributes {
   name: string
   slug: string
   domain: string
@@ -99,18 +114,28 @@ export interface StoreAttributes extends BaseAttributes {
   thirty_day_revenue: number
 }
 
-export interface Store extends Base {
-  attributes: StoreAttributes
-}
-
 export interface WebhookAttributes extends BaseAttributes {
   url: string
   events: string[]
-  test_mode?: boolean = false
   last_sent_at?: string
   store_id: number
 }
 
-export interface Webhook extends Base {
-  attributes: WebhookAttributes
+// custom interfaces
+
+export interface Order extends Base<OrderAttributes> {
+  store: Store
+}
+
+export interface User extends Base<UserAttributes> {}
+
+export interface Store extends Base<StoreAttributes> {}
+
+export interface Webhook extends Base<WebhookAttributes> {}
+
+export interface ApiResponse<Type> {
+  meta: Meta
+  jsonapi: Jsonapi
+  links: Links
+  data: Type
 }

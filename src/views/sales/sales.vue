@@ -1,6 +1,11 @@
 <template>
-  <div v-if="allOrders" class="flex flex-col gap-8 w-full h-full p-3">
-    <SalesCard v-for="item in allOrders" :key="item.id" v-bind="item" />
+  <div class="flex flex-col gap-8 w-full h-full p-3">
+    <SalesCard
+      v-if="allOrders.orders && allOrders.orders.length > 0"
+      v-for="item in allOrders.orders"
+      :key="item.id"
+      v-bind="item"
+    />
     <!-- <div
       @click="showOlderSales = !showOlderSales"
       class="flex items-center w-full text-zinc-400 text-sm gap-6"
@@ -11,14 +16,9 @@
           <use :xlink:href="`/tabler-sprite.svg#${icon}`" />
         </svg> 
     </div> -->
-    <!-- <SalesCard
-      v-for="item in sales"
-      :key="item.order.id"
-      :seen="true"
-      :order="item.order"
-      :store="item.store"
-      :customer="item.customer"
-    /> -->
+    <template v-else>
+      <h1 class="text-center text-zinc-500 text-xl font-light mt-8">No orders found.</h1>
+    </template>
   </div>
 </template>
 

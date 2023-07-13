@@ -16,7 +16,6 @@ export function useCitrus() {
       const encrypted = await encrypt(api_key, import.meta.env.VITE_SECRET)
       await set('api_key', encrypted)
       const { data } = await getData('users/me')
-      console.log(data)
       if (data) {
         showToast('API Key Verified', 'success')
         return true

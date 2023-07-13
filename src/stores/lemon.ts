@@ -37,10 +37,10 @@ export const useLemonStore = defineStore('Lemon', {
     },
     allOrders: (state) => {
       return {
-        orders: state.orders?.data.map((order: Order) => {
+        orders: state.orders?.data?.map((order: Order) => {
           return {
             ...order,
-            store: state.stores?.data.find(
+            store: state.stores?.data?.find(
               (store: Store) => Number(store.id) == order.attributes.store_id
             )
           }
@@ -50,10 +50,10 @@ export const useLemonStore = defineStore('Lemon', {
     },
     allSubscriptions: (state) => {
       return {
-        subscriptions: state.subscriptions?.data.map((order: Order) => {
+        subscriptions: state.subscriptions?.data?.map((order: Order) => {
           return {
             ...order,
-            store: state.stores?.data.find(
+            store: state.stores?.data?.find(
               (store: Store) => Number(store.id) == order.attributes.store_id
             )
           }
@@ -87,14 +87,16 @@ export const useLemonStore = defineStore('Lemon', {
         })
         return true
       } else {
-        console.log('Fetching data from API')
         await remove('citrus_data')
-        let modeledData = await this.refreshData()
-        Object.keys(modeledData).forEach((key) => {
+        const modeledData = await this.refreshData()
+        let modeledDataKeys = Object.keys(modeledData)
+        // @ts-ignore
+        if (modeledDataKeys.some((e) => modeledData[e] instanceof Error)) throw modeledData
+        modeledDataKeys.forEach((key) => {
           // @ts-ignore
           this[key] = modeledData[key]
         })
-        await set('citrus_data', JSON.stringify(modeledData))
+        // await set('citrus_data', JSON.stringify(modeledData))
         return true
       }
     },
@@ -118,76 +120,68 @@ export const useLemonStore = defineStore('Lemon', {
       // @ts-ignore
       const [user, stores, orders, subscriptions, webhooks] = data
       const modeledData = {
-        user,
-        stores,
-        orders,
-        subscriptions,
-        webhooks,
+        user: user,
+        stores: stores,
+        orders: orders,
+        subscriptions: subscriptions,
+        webhooks: webhooks,
         lastFetch: new Date()
       }
 
       return modeledData
     },
-    async fetchUser() {
+    async fetchUser(): Promise<ApiResponse<User[]> | Error> {
       try {
         const data = await getData('users/me')
         if (!data) throw new Error('No user found or invalid api key')
         this.user = data
         return data
-      } catch (error) {
-        // @ts-ignore
-        showToast(error, 'error')
-        return null
+      } catch (error: any) {
+        return error
       }
     },
-    async fetchStores() {
+    async fetchStores(): Promise<ApiResponse<Store[]> | Error> {
       try {
         const data = await getData('stores')
         if (!data) throw new Error('No stores found or invalid api key')
         this.stores = data
         return data
-      } catch (error) {
+      } catch (error: any) {
         // @ts-ignore
-        showToast(error, 'error')
-        return null
+        return error
       }
     },
 
-    async fetchOrders() {
+    async fetchOrders(): Promise<ApiResponse<Order[]> | Error> {
       try {
         const data = await getData('orders?page[size]=100')
         if (!data) throw new Error('No orders found or invalid api key')
         this.orders = data
         return data
-      } catch (error) {
+      } catch (error: any) {
         // @ts-ignore
-        showToast(error, 'error')
-        return null
+        return error
       }
     },
 
-    async fetchSubscriptions() {
+    async fetchSubscriptions(): Promise<ApiResponse<Order[]> | Error> {
       try {
         const data = await getData('subscriptions')
         if (!data) throw new Error('No subscriptions found or invalid api key')
         this.subscriptions = data
         return data
-      } catch (error) {
-        // @ts-ignore
-        showToast(error, 'error')
-        return null
+      } catch (error: any) {
+        return error
       }
     },
-    async fetchWebhooks() {
+    async fetchWebhooks(): Promise<ApiResponse<Webhook[]> | Error> {
       try {
         const data = await getData('webhooks')
         if (!data) throw new Error('No webhooks found or invalid api key')
         this.webhooks = data
         return data
-      } catch (error) {
-        // @ts-ignore
-        showToast(error, 'error')
-        return null
+      } catch (error: any) {
+        return error
       }
     },
 

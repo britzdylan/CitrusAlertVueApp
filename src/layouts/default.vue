@@ -9,27 +9,34 @@
 
     <slot v-if="!loading" />
     <Loader v-else />
-    <Navbar v-show="!loading" />
+    <Footer class="!p-0">
+      <Navbar v-show="!loading" />
+    </Footer>
   </main>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { useLemonStore } from '@/stores/lemon'
 import { usePopup } from '@/composables/popup'
 import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useToast } from '@/composables/toast'
 const { popup } = usePopup()
 const store = useLemonStore()
-const { isAuthenticated } = storeToRefs(store)
 const loading = computed(() => store.loading)
-
+const router = useRouter()
+const { showToast } = useToast()
 onMounted(async () => {
   await store.startLoading()
-  if (!isAuthenticated) {
-    useRouter().push('/register')
+  try {
+    await store.getAllData()
+  } catch (e) {
+    showToast('Something went wrong please try again', 'error')
   }
-  await store.getAllData()
+  if (!store.isAuthenticated) {
+    router.push('/register')
+    return
+  }
   await store.stopLoading()
 })
 </script>

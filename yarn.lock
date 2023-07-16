@@ -977,11 +977,6 @@
   resolved "https://registry.yarnpkg.com/@canvas/image-data/-/image-data-1.0.0.tgz#3bd2cd856e13fc9e2c25feff360a4056857b0367"
   integrity sha512-BxOqI5LgsIQP1odU5KMwV9yoijleOPzHL18/YvNqF9KFSGF2K/DLlYAbDQsWqd/1nbaFuSkYD/191dpMtNh4vw==
 
-"@capacitor-firebase/messaging@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@capacitor-firebase/messaging/-/messaging-5.0.1.tgz#67eefb1e9643988933857e991f65eabc3c51d7c8"
-  integrity sha512-KPmVukeJYOfxuIhpOmb+XGkWYKSL9HBVO9Gxn+JHcrs4lKURo5PtVpiw3Z1ulzSiqHny6PyIWSPxCcL3eFg8NQ==
-
 "@capacitor/android@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-5.1.0.tgz#abd50096bbff79e9b742052d0be07487bf1b46cc"
@@ -1017,6 +1012,11 @@
   dependencies:
     tslib "^2.1.0"
 
+"@capacitor/device@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@capacitor/device/-/device-5.0.6.tgz#11322a9c737196f2df8f82abbe6d1a5b32e35fb7"
+  integrity sha512-tmjK0H8IKbDLMcmzZzJPbV+9yLkKJ76QOdz4A7fZAOYx2GnFHsFngxldq/wKotGAJuDX/ih3ZzHNrzVguzlv2g==
+
 "@capacitor/dialog@^5.0.5":
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/@capacitor/dialog/-/dialog-5.0.5.tgz#8ecbc583ce68dc17f1a691c597c682c1916258a6"
@@ -1026,6 +1026,11 @@
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-5.1.0.tgz#d7de79fb089f5d0e573a1a251a2a65e980546156"
   integrity sha512-OMXYrIzfb6bSY3M6xkamGr3W+nRQ3rvfEVTlV1ruCNNBWnYn+eFNyM1SLbscMrKOrI6MoUN0IMv5oUNZzLnNxA==
+
+"@capacitor/local-notifications@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@capacitor/local-notifications/-/local-notifications-5.0.6.tgz#9684dbd7086e325e61b9297569ee9c06e5b8d8f9"
+  integrity sha512-DB+ZBjv3Ri/0mtSzjMxLMHNGfg5m615ewDfQxp++mu7pYUM1RkxfSiigw73+PlZXDow1YNQJRlzTkwEKs6Pf+g==
 
 "@capacitor/preferences@^5.0.5":
   version "5.0.5"
@@ -5419,7 +5424,7 @@ vite@^4.3.9:
   optionalDependencies:
     fsevents "~2.3.2"
 
-vue-demi@>=0.14.5:
+vue-demi@>=0.14.5, vue-demi@latest:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.5.tgz#676d0463d1a1266d5ab5cba932e043d8f5f2fbd9"
   integrity sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA==
@@ -5471,6 +5476,13 @@ vue@^3.3.4:
     "@vue/runtime-dom" "3.3.4"
     "@vue/server-renderer" "3.3.4"
     "@vue/shared" "3.3.4"
+
+vuefire@^3.1.8:
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/vuefire/-/vuefire-3.1.8.tgz#495edbf9aa3be82ba3d6fde05c143cd4ba434027"
+  integrity sha512-4yIPLTQVGcAG+pPR9ycFypsXsGk6p50bbJTxQC6cm9kDT4jwOMmVC5S/oamgkAM2Z6xnftZ+u8yjTc60x87TCw==
+  dependencies:
+    vue-demi latest
 
 webidl-conversions@^3.0.0:
   version "3.0.1"

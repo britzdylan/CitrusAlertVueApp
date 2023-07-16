@@ -18,14 +18,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useCitrus } from '@/composables/citrus'
 import { useToast } from '@/composables/toast'
+import { useLemonStore } from '@/stores/lemon'
 
-const { runSetup } = useCitrus()
+const { runWebSetup } = useCitrus()
 const { showToast } = useToast()
+const store = useLemonStore()
+
 const loading = ref(false)
-const isNotificationEnabled = ref(false)
+const isNotificationEnabled = computed(() => store.notificationEnabled)
+
 const getIcon = () => {
   return isNotificationEnabled.value ? 'tabler-bell-ringing' : 'tabler-bell-off'
 }
@@ -39,9 +43,13 @@ const getText = () => {
 const enableNotifications = async () => {
   loading.value = true
   try {
-    let res = await runSetup()
+    let res
+    if (store.deviceInfo?.platform === 'web') {
+      res = await runWebSetup()
+    } else {
+      // res = await store.enableNotifications()
+    }
     if (res) {
-      isNotificationEnabled.value = true
       showToast('Push notifications enabled successfully.', 'success')
     }
   } catch (error) {

@@ -21,6 +21,7 @@ import { usePopup } from '@/composables/popup'
 import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from '@/composables/toast'
+
 const { popup } = usePopup()
 const store = useLemonStore()
 const loading = computed(() => store.loading)
@@ -30,6 +31,8 @@ onMounted(async () => {
   await store.startLoading()
   try {
     await store.getAllData()
+    // let res = await fbGetToken()
+    // console.log(res)
   } catch (e) {
     showToast('Something went wrong please try again', 'error')
   }

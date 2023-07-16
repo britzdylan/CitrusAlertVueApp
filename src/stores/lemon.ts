@@ -1,14 +1,28 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useApi } from '@/composables/api'
 import { useToast } from '@/composables/toast'
 import { useStorage } from '@/composables/storage'
+// import { useNotifications } from '@/composables/notifications'
+import { useFirebaseMessaging } from '@/composables/webMessaging'
+import { Device } from '@capacitor/device'
+
 import type { Webhook, Order, User, Store, ApiResponse } from '@/types'
 
 const { getData, postData, deleteData, updateData } = useApi()
 const { showToast } = useToast()
-const { get, set, remove } = useStorage()
+const { get, remove } = useStorage()
 
+const { fireBaseMessaging, checkPermissions } = useFirebaseMessaging()
+
+interface DeviceInfo {
+  isVirtual: boolean
+  manufacturer: string
+  model: string
+  operatingSystem: string
+  osVersion: string
+  platform: string
+  webViewVersion: string
+}
 interface State {
   user: ApiResponse<User[]> | null
   stores: ApiResponse<Store[]> | null
@@ -17,6 +31,8 @@ interface State {
   webhooks: ApiResponse<Webhook[]> | null
   lastFetch: Date | null
   loading: boolean
+  notificationEnabled: boolean | null
+  deviceInfo: DeviceInfo | null
 }
 
 export const useLemonStore = defineStore('Lemon', {
@@ -28,12 +44,17 @@ export const useLemonStore = defineStore('Lemon', {
       subscriptions: null,
       webhooks: null,
       lastFetch: null,
-      loading: false
+      loading: false,
+      notificationEnabled: null,
+      deviceInfo: null
     }
   },
   getters: {
     isAuthenticated: (state) => {
       return state.user !== null
+    },
+    fireBaseMessage: (state) => {
+      return fireBaseMessaging
     },
     allOrders: (state) => {
       return {
@@ -69,6 +90,11 @@ export const useLemonStore = defineStore('Lemon', {
     }
   },
   actions: {
+    async fetchDeviceInfo() {
+      // @ts-ignore
+      let res = await Device.getInfo()
+      this.deviceInfo = res
+    },
     async getLocalData() {
       const localData = await get('citrus_data')
       if (localData) {
@@ -79,6 +105,7 @@ export const useLemonStore = defineStore('Lemon', {
       return false
     },
     async getAllData(): Promise<boolean> {
+      this.notificationEnabled = await checkPermissions()
       const localData = await this.getLocalData()
       if (localData) {
         Object.keys(localData).forEach((key) => {
@@ -115,7 +142,8 @@ export const useLemonStore = defineStore('Lemon', {
         this.fetchStores(),
         this.fetchOrders(),
         this.fetchSubscriptions(),
-        this.fetchWebhooks()
+        this.fetchWebhooks(),
+        this.fetchDeviceInfo()
       ])
       // @ts-ignore
       const [user, stores, orders, subscriptions, webhooks] = data

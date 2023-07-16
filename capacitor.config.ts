@@ -7,6 +7,11 @@ const config: CapacitorConfig = {
   plugins: {
     FirebaseMessaging: {
       presentationOptions: ['badge', 'sound', 'alert']
+    },
+    LocalNotifications: {
+      smallIcon: 'ic_stat_attach_money',
+      iconColor: '#ffffff',
+      sound: 'beep.wav'
     }
   }
   // server: {

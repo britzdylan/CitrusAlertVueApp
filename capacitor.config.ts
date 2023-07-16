@@ -4,11 +4,15 @@ const config: CapacitorConfig = {
   appId: 'com.citrusalert.app',
   appName: 'Citrus Alert',
   webDir: 'dist',
-  server: {
-    androidScheme: 'https',
-    url: process.env.APP ?? 'http://172.20.104.134:3000',
-    cleartext: true
+  plugins: {
+    FirebaseMessaging: {
+      presentationOptions: ['badge', 'sound', 'alert']
+    }
   }
+  // server: {
+  //   url: process.env.APP_HOST || '',
+  //   cleartext: true
+  // }
 }
 
 export default config

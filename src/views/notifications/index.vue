@@ -9,8 +9,8 @@
 
     <Button
       v-if="!isNotificationEnabled"
-      :loading="loading"
       @click="enableNotifications"
+      :loading="loading"
       class="btn-primary w-full"
       >Enable Push Notifications</Button
     >

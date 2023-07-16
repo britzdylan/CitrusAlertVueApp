@@ -92,7 +92,7 @@ export const useLemonStore = defineStore('Lemon', {
   actions: {
     async fetchDeviceInfo() {
       // @ts-ignore
-      let res = await Device.getInfo()
+      const res = await Device.getInfo()
       this.deviceInfo = res
     },
     async getLocalData() {
@@ -104,8 +104,12 @@ export const useLemonStore = defineStore('Lemon', {
       }
       return false
     },
-    async getAllData(): Promise<boolean> {
+    async checkNotificationPermissions() {
       this.notificationEnabled = await checkPermissions()
+      return this.notificationEnabled
+    },
+    async getAllData(): Promise<boolean> {
+      await this.checkNotificationPermissions()
       const localData = await this.getLocalData()
       if (localData) {
         Object.keys(localData).forEach((key) => {
@@ -116,7 +120,7 @@ export const useLemonStore = defineStore('Lemon', {
       } else {
         await remove('citrus_data')
         const modeledData = await this.refreshData()
-        let modeledDataKeys = Object.keys(modeledData)
+        const modeledDataKeys = Object.keys(modeledData)
         // @ts-ignore
         if (modeledDataKeys.some((e) => modeledData[e] instanceof Error)) throw modeledData
         modeledDataKeys.forEach((key) => {

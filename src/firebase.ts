@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
-// import { getAnalytics } from 'firebase/analytics'
+import { getAnalytics } from 'firebase/analytics'
+import exp from 'constants'
 // import { useToast } from './composables/toast'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -17,3 +18,5 @@ export const firebaseApp = initializeApp({
   appId: '1:1002204423830:web:7137b86f93dbd65d0284b7',
   measurementId: 'G-Y8VB1EDTCM'
 })
+
+export const analytics = getAnalytics(firebaseApp)

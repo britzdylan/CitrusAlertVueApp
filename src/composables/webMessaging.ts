@@ -7,11 +7,12 @@ export const useFirebaseMessaging = () => {
   const { get } = useStorage()
 
   const requestPermissions = async () => {
-    getToken(fireBaseMessaging, {
+    return getToken(fireBaseMessaging, {
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY || ''
     })
       .then((currentToken) => {
         if (currentToken) {
+          console.log('currentToken', currentToken)
           return currentToken
         } else {
           // Show permission request UI
@@ -34,9 +35,8 @@ export const useFirebaseMessaging = () => {
 
   const addListeners = async () => {
     onMessage(fireBaseMessaging, (payload) => {
-      // console.log('Message received. ', payload)
+      console.log('Message received. ', payload)
       const { showToast } = useToast()
-      // @ts-ignore
       showToast(payload?.notification?.title, 'info', true)
     })
   }

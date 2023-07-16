@@ -5,11 +5,7 @@
   >
     <div class="flex flex-col gap-2">
       <Input v-model="api_key" placeholder="Enter your API key" type="text" />
-      <Button
-        :error="error"
-        @click="register()"
-        :loading="loading"
-        class="btn btn-primary w-full"
+      <Button :error="error" @click="register()" :loading="loading" class="btn btn-primary w-full"
         >Save Change</Button
       >
     </div>

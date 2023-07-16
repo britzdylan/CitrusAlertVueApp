@@ -49,12 +49,16 @@ const enableNotifications = async () => {
     } else {
       // res = await store.enableNotifications()
     }
+    console.log(res, 'res')
     if (res) {
       showToast('Push notifications enabled successfully.', 'success')
+      await store.checkNotificationPermissions()
+      loading.value = false
     }
   } catch (error) {
     showToast('Something went wrong. Please try again.', 'error')
     console.log(error)
+    loading.value = false
   }
 }
 </script>

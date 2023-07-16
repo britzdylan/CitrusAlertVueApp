@@ -58,7 +58,7 @@ export function useCitrus() {
   // }
 
   const runNativeSetup = async () => {
-    let res: any = await registerNotifications()
+    const res: any = await registerNotifications()
     // await fetchUser()
     // await fetchStores()
     // @ts-ignore
@@ -67,7 +67,8 @@ export function useCitrus() {
   }
 
   const runWebSetup = async () => {
-    let res: any = await requestPermissions()
+    const res = await Promise.all([requestPermissions()])
+
     await addListeners()
     return res
   }

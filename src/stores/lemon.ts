@@ -44,7 +44,7 @@ export const useLemonStore = defineStore('Lemon', {
       subscriptions: null,
       webhooks: null,
       lastFetch: null,
-      loading: false,
+      loading: true,
       notificationEnabled: null,
       deviceInfo: null
     }

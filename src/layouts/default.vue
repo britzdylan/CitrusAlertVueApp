@@ -31,8 +31,6 @@ onMounted(async () => {
   await store.startLoading()
   try {
     await store.getAllData()
-    // let res = await fbGetToken()
-    // console.log(res)
   } catch (e) {
     showToast('Something went wrong please try again', 'error')
   }

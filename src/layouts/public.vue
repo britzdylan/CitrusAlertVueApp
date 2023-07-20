@@ -8,10 +8,25 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
-const route = useRoute()
-const popup = computed(() => route.query.popup)
+import { useLemonStore } from '@/stores/lemon'
+import { usePopup } from '@/composables/popup'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const { popup } = usePopup()
+const store = useLemonStore()
+const router = useRouter()
+
+onMounted(async () => {
+  await store.startLoading()
+  await store.getAllData()
+  console.log(store.isAuthenticated, 'store.isAuthenticated')
+  if (store.isAuthenticated) {
+    router.replace('/sales')
+    return
+  }
+  await store.stopLoading()
+})
 </script>
 
 <style scoped></style>

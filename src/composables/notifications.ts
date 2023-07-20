@@ -20,6 +20,8 @@ export function useNotifications() {
         notification.inputValue
       )
     })
+
+    return true
   }
 
   const registerNotifications = async () => {
@@ -34,6 +36,13 @@ export function useNotifications() {
     }
 
     await PushNotifications.register()
+    return true
+  }
+
+  const checkNotificationPermissions = async () => {
+    const permStatus = await PushNotifications.checkPermissions()
+    console.log('permStatus', permStatus)
+    return permStatus.receive === 'granted'
   }
 
   const getDeliveredNotifications = async () => {
@@ -41,5 +50,10 @@ export function useNotifications() {
     console.log('delivered notifications', notificationList)
   }
 
-  return { addListeners, registerNotifications, getDeliveredNotifications }
+  return {
+    addListeners,
+    registerNotifications,
+    getDeliveredNotifications,
+    checkNotificationPermissions
+  }
 }

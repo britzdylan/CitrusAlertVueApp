@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { useApi } from '@/composables/api'
 import { useToast } from '@/composables/toast'
 import { useStorage } from '@/composables/storage'
-// import { useNotifications } from '@/composables/notifications'
+import { useNotifications } from '@/composables/notifications'
 import { useFirebaseMessaging } from '@/composables/webMessaging'
 import { Device } from '@capacitor/device'
 
@@ -12,7 +12,7 @@ const { getData, postData, deleteData, updateData } = useApi()
 const { showToast } = useToast()
 const { get, remove } = useStorage()
 
-const { fireBaseMessaging, checkPermissions } = useFirebaseMessaging()
+const { checkNotificationPermissions } = useNotifications()
 
 interface DeviceInfo {
   isVirtual: boolean
@@ -52,9 +52,6 @@ export const useLemonStore = defineStore('Lemon', {
   getters: {
     isAuthenticated: (state) => {
       return state.user !== null
-    },
-    fireBaseMessage: (state) => {
-      return fireBaseMessaging
     },
     allOrders: (state) => {
       return {
@@ -105,8 +102,14 @@ export const useLemonStore = defineStore('Lemon', {
       return false
     },
     async checkNotificationPermissions() {
-      this.notificationEnabled = await checkPermissions()
-      return this.notificationEnabled
+      if (this.deviceInfo?.platform === 'web') {
+        const { checkPermissions } = useFirebaseMessaging()
+        this.notificationEnabled = await checkPermissions()
+        return this.notificationEnabled
+      } else {
+        this.notificationEnabled = await checkNotificationPermissions()
+        return this.notificationEnabled
+      }
     },
     async getAllData(): Promise<boolean> {
       await this.checkNotificationPermissions()

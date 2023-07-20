@@ -23,7 +23,7 @@ import { useCitrus } from '@/composables/citrus'
 import { useToast } from '@/composables/toast'
 import { useLemonStore } from '@/stores/lemon'
 
-const { runWebSetup } = useCitrus()
+const { runWebSetup, runNativeSetup } = useCitrus()
 const { showToast } = useToast()
 const store = useLemonStore()
 
@@ -47,9 +47,9 @@ const enableNotifications = async () => {
     if (store.deviceInfo?.platform === 'web') {
       res = await runWebSetup()
     } else {
-      // res = await store.enableNotifications()
+      res = await runNativeSetup()
     }
-    console.log(res, 'res')
+    console.log(res, 'RESSSSSSSSSSSS')
     if (res) {
       showToast('Push notifications enabled successfully.', 'success')
       await store.checkNotificationPermissions()

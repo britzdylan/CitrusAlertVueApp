@@ -11,8 +11,6 @@ export function useCitrus() {
   const { encrypt } = useCrypto()
   const { showToast } = useToast()
   const { getData } = useApi()
-  const { registerNotifications } = useNotifications()
-  const { requestPermissions, addListeners } = useFirebaseMessaging()
 
   const testKey = async (api_key: string) => {
     try {
@@ -58,16 +56,17 @@ export function useCitrus() {
   // }
 
   const runNativeSetup = async () => {
-    const res: any = await registerNotifications()
-    // await fetchUser()
-    // await fetchStores()
-    // @ts-ignore
-    // res = await setupWebhooks(res[0].id)
+    const { registerNotifications, addListeners } = useNotifications()
+
+    const res = await registerNotifications()
+    await addListeners()
     return res
   }
 
   const runWebSetup = async () => {
-    const res = await Promise.all([requestPermissions()])
+    const { requestPermissions, addListeners } = useFirebaseMessaging()
+
+    const res = await requestPermissions()
 
     await addListeners()
     return res

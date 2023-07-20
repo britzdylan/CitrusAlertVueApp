@@ -37,7 +37,7 @@ export const useFirebaseMessaging = () => {
     onMessage(fireBaseMessaging, (payload) => {
       console.log('Message received. ', payload)
       const { showToast } = useToast()
-      showToast(payload?.notification?.title, 'info', true)
+      showToast(payload?.notification?.title ?? 'You made a sale', 'info', true)
     })
   }
   return { addListeners, requestPermissions, checkPermissions, fireBaseMessaging }

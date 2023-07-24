@@ -5,7 +5,6 @@ import { useStorage } from '@/composables/storage'
 import { useNotifications } from '@/composables/notifications'
 import { useFirebaseMessaging } from '@/composables/webMessaging'
 import { Device } from '@capacitor/device'
-
 import type { Webhook, Order, User, Store, ApiResponse } from '@/types'
 
 const { getData, postData, deleteData, updateData } = useApi()
@@ -174,20 +173,19 @@ export const useLemonStore = defineStore('Lemon', {
       return modeledData
     },
     async setupWebhooks(id: number) {
-      const secret = () => {
-        let result = ''
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        const charactersLength = characters.length
-        for (let i = 0; i < 5; i++) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength))
-        }
-        return `${result}-${id}`
-      }
-      const secretKey = secret()
+      // const secret = () => {
+      //   let result = ''
+      //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      //   const charactersLength = characters.length
+      //   for (let i = 0; i < 5; i++) {
+      //     result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      //   }
+      //   return `${result}-${id}`
+      // }
       const data = {
-        url: import.meta.env.VITE_WEBHOOK_URL,
+        url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${id}`,
         events: ['order_created', 'subscription_created'],
-        secret: secretKey,
+        secret: import.meta.env.VITE_WEBHOOK_SECRET,
         test_mode: process.env.NODE_ENV === 'development'
       }
       console.log(data)
@@ -214,7 +212,7 @@ export const useLemonStore = defineStore('Lemon', {
             return await this.createWebhook(data, store.id)
           })
         )
-        return secretKey
+        return webhooks
       } else {
         // update webhook
         const webhooks = await Promise.all(
@@ -222,7 +220,7 @@ export const useLemonStore = defineStore('Lemon', {
             return await this.updateWebhook(found.id, data, store.id)
           })
         )
-        return secretKey
+        return webhooks
       }
     },
     async fetchUser(): Promise<ApiResponse<User[]> | Error> {

@@ -58,11 +58,10 @@ const enableNotifications = async () => {
       await store.checkNotificationPermissions()
       // save to db
       const userId = await getNextUserId()
-      const webhook_secret = await store.setupWebhooks(userId)
-      if (webhook_secret instanceof Error)
-        throw new Error('Something went wrong. Please try again.')
-      if (!webhook_secret) throw new Error('Something went wrong. Please try again.')
-      await createUser(res, userId, webhook_secret)
+      const webhooks = await store.setupWebhooks(userId)
+      if (webhooks instanceof Error) throw new Error('Something went wrong. Please try again.')
+      if (!webhooks) throw new Error('Something went wrong. Please try again.')
+      await createUser(res, userId)
       loading.value = false
     }
   } catch (error) {

@@ -30,7 +30,7 @@ export function useCitrus() {
     }
   }
 
-  const runNativeSetup = async () : Promise<void> => {
+  const runNativeSetup = async (): Promise<void> => {
     const { registerNotifications, addListeners } = useNotifications()
 
     const res = await registerNotifications()
@@ -38,10 +38,10 @@ export function useCitrus() {
     return res
   }
 
-  const runWebSetup = async () : Promise<string> => {
+  const runWebSetup = async (): Promise<string> => {
     const { requestPermissions, addListeners } = useFirebaseMessaging()
 
-    const res : string = await requestPermissions()
+    const res: string = await requestPermissions()
 
     await addListeners()
     return res

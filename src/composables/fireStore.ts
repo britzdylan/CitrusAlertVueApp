@@ -4,16 +4,14 @@ import { v4 as uuidv4 } from 'uuid'
 class User {
   api_key: string
   device_token: string
-  webhook_secret: string
-  constructor(api_key: string, device_token: string, webhook_secret: string) {
+  constructor(api_key: string, device_token: string) {
     this.api_key = api_key
     this.device_token = device_token
-    this.webhook_secret = webhook_secret
   }
 }
 export function useFireStore() {
-  const createUser = async (token: string, id: number, webhook_secret: string) => {
-    const user = new User('api_key', token, webhook_secret)
+  const createUser = async (token: string, id: number) => {
+    const user = new User('api_key', token)
     await setDoc(doc(db, 'users', String(id)), Object.assign({}, user))
     return id
   }

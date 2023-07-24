@@ -37,45 +37,70 @@ interface OrderAttributes {
   }
 }
 
-import { onRequest } from 'firebase-functions/v2/https'
-import { initializeApp } from 'firebase-admin/app'
-import { messaging } from 'firebase-admin'
+import {onRequest} from "firebase-functions/v2/https";
+import {initializeApp} from "firebase-admin/app";
+import {messaging, firestore} from "firebase-admin";
 
-initializeApp()
+initializeApp();
 
 exports.sendPushNotification = onRequest(
   {
-    cors: true
+    cors: true,
   },
   async (req, res) => {
-    const deviceToken = String(req.query.token) // get from firestore
-    const newOrder = { ...req.body } as OrderAttributes
-    console.log(newOrder)
+    const signature = Buffer.from(req.get("X-Signature") || "", "utf8");
+
+    if (!signature) {
+      res.status(400).send("Invalid secret");
+      return;
+    }
+    const userId = req.query.id;
+    if (!userId) {
+      res.status(400).send("Invalid id");
+      return;
+    }
+    const db = firestore();
+
+    // fetch user from firestore
+    const user = await db.collection("users").doc(String(userId)).get();
+    if (!user.exists) {
+      res.status(400).send("User not found");
+      return;
+    }
+    const deviceToken = user.data()?.device_token; // get from firestore
+    if (!deviceToken) {
+      res.status(400).send("Device token not found");
+      return;
+    }
+    const newOrder = {...req.body} as OrderAttributes;
+
+    console.log(newOrder);
     if (!deviceToken || !newOrder.attributes) {
-      res.status(400).send('Missing device token or order')
-      return
+      res.status(400).send("Missing device token or order");
+      return;
     }
 
-    if (newOrder.attributes.status !== 'paid') {
-      res.status(200).send('Order is not paid')
-      return
+    if (newOrder.attributes.status !== "paid") {
+      res.status(200).send("Order is not paid");
+      return;
     }
 
     const message = {
       notification: {
         title: `New Order for ${newOrder.attributes.total_formatted}`,
-        body: `Order #${newOrder.attributes.order_number} was just placed`
+        body: `Order #${newOrder.attributes.order_number} was just placed`,
       },
-      token: deviceToken
-    }
+      token: deviceToken,
+    };
 
     try {
-      const response = await messaging().send(message)
-      console.log('Successfully sent message:', response)
-      res.status(200).send('Notification sent successfully')
+      const response = await messaging().send(message);
+      console.log("Successfully sent message:", response);
+      res.status(200).send("Notification sent successfully");
     } catch (error) {
-      console.log('Error sending message:', error)
-      res.status(500).send('Notification failed')
+      console.log("Error sending message:", error);
+      res.status(500).send("Notification failed");
+      return;
     }
   }
-)
+);

@@ -30,6 +30,7 @@
     "dayjs": "^1.11.9",
     "firebase": "^10.0.0",
     "pinia": "^2.1.3",
+    "uuid": "^9.0.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.2",
     "vuefire": "^3.1.8"
@@ -40,6 +41,7 @@
     "@tsconfig/node18": "^2.0.1",
     "@types/crypto-js": "^4.1.1",
     "@types/node": "^18.16.17",
+    "@types/uuid": "^9.0.2",
     "@vite-pwa/assets-generator": "^0.0.3",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",

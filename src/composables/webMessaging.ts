@@ -13,7 +13,7 @@ export const useFirebaseMessaging = () => {
     })
       .then((currentToken) => {
         if (currentToken) {
-          console.log('currentToken', currentToken)
+          // console.log('currentToken', currentToken)
           return currentToken
         } else {
           // Show permission request UI

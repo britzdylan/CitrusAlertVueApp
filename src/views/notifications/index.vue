@@ -21,10 +21,12 @@
 import { ref, computed } from 'vue'
 import { useCitrus } from '@/composables/citrus'
 import { useToast } from '@/composables/toast'
+import { useFireStore } from '@/composables/fireStore'
 import { useLemonStore } from '@/stores/lemon'
 
 const { runWebSetup, runNativeSetup } = useCitrus()
 const { showToast } = useToast()
+const { createUser, getNextUserId } = useFireStore()
 const store = useLemonStore()
 
 const loading = ref(false)
@@ -54,7 +56,13 @@ const enableNotifications = async () => {
     if (res) {
       showToast('Push notifications enabled successfully.', 'success')
       await store.checkNotificationPermissions()
-      await store.setupWebhooks(res)
+      // save to db
+      const userId = await getNextUserId()
+      const webhook_secret = await store.setupWebhooks(userId)
+      if (webhook_secret instanceof Error)
+        throw new Error('Something went wrong. Please try again.')
+      if (!webhook_secret) throw new Error('Something went wrong. Please try again.')
+      await createUser(res, userId, webhook_secret)
       loading.value = false
     }
   } catch (error) {

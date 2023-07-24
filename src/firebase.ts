@@ -2,6 +2,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import { getMessaging } from 'firebase/messaging'
+import { getFirestore, collection } from 'firebase/firestore'
 
 // import { useToast } from './composables/toast'
 // TODO: Add SDKs for Firebase products that you want to use
@@ -22,3 +23,4 @@ export const firebaseApp = initializeApp({
 })
 export const analytics = getAnalytics(firebaseApp)
 export const messaging = getMessaging(firebaseApp)
+export const db = getFirestore(firebaseApp)

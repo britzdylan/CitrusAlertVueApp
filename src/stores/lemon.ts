@@ -173,11 +173,21 @@ export const useLemonStore = defineStore('Lemon', {
 
       return modeledData
     },
-    async setupWebhooks(key: string) {
+    async setupWebhooks(id: number) {
+      const secret = () => {
+        let result = ''
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        const charactersLength = characters.length
+        for (let i = 0; i < 5; i++) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength))
+        }
+        return `${result}-${id}`
+      }
+      const secretKey = secret()
       const data = {
         url: import.meta.env.VITE_WEBHOOK_URL,
         events: ['order_created', 'subscription_created'],
-        secret: key,
+        secret: secretKey,
         test_mode: process.env.NODE_ENV === 'development'
       }
       console.log(data)
@@ -204,7 +214,7 @@ export const useLemonStore = defineStore('Lemon', {
             return await this.createWebhook(data, store.id)
           })
         )
-        return webhooks
+        return secretKey
       } else {
         // update webhook
         const webhooks = await Promise.all(
@@ -212,7 +222,7 @@ export const useLemonStore = defineStore('Lemon', {
             return await this.updateWebhook(found.id, data, store.id)
           })
         )
-        return webhooks
+        return secretKey
       }
     },
     async fetchUser(): Promise<ApiResponse<User[]> | Error> {

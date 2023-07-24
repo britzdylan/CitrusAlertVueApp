@@ -50,10 +50,11 @@ const enableNotifications = async () => {
     if (store.deviceInfo?.platform === 'ios' || store.deviceInfo?.platform === 'android') {
       res = await runNativeSetup()
     }
-    console.log(res, 'RESSSSSSSSSSSS')
+    // console.log(res, 'RESSSSSSSSSSSS')
     if (res) {
       showToast('Push notifications enabled successfully.', 'success')
       await store.checkNotificationPermissions()
+      await store.setupWebhooks(res)
       loading.value = false
     }
   } catch (error) {

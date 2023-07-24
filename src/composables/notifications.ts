@@ -35,8 +35,7 @@ export function useNotifications() {
       throw new Error('User denied permissions!')
     }
 
-    await PushNotifications.register()
-    return true
+    return await PushNotifications.register()
   }
 
   const checkNotificationPermissions = async () => {

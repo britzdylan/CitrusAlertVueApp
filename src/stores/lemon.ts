@@ -173,6 +173,48 @@ export const useLemonStore = defineStore('Lemon', {
 
       return modeledData
     },
+    async setupWebhooks(key: string) {
+      const data = {
+        url: import.meta.env.VITE_WEBHOOK_URL,
+        events: ['order_created', 'subscription_created'],
+        secret: key,
+        test_mode: process.env.NODE_ENV === 'development'
+      }
+      console.log(data)
+
+      // loop through stores and create webhooks
+      const stores = this.stores?.data
+      if (!stores) return
+
+      // find webhooks
+      const allWebhooks = await this.fetchWebhooks()
+
+      if (allWebhooks instanceof Error) return allWebhooks
+
+      const found = allWebhooks?.data?.find(
+        (webhook: Webhook) => webhook.attributes.url === import.meta.env.VITE_WEBHOOK_URL
+      )
+      console.log(found)
+
+      // if no webhooks found, create a new webhook
+      if (!found) {
+        // create webhook
+        const webhooks = await Promise.all(
+          stores.map(async (store: Store) => {
+            return await this.createWebhook(data, store.id)
+          })
+        )
+        return webhooks
+      } else {
+        // update webhook
+        const webhooks = await Promise.all(
+          stores.map(async (store: Store) => {
+            return await this.updateWebhook(found.id, data, store.id)
+          })
+        )
+        return webhooks
+      }
+    },
     async fetchUser(): Promise<ApiResponse<User[]> | Error> {
       try {
         const data = await getData('users/me')

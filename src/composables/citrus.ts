@@ -30,31 +30,6 @@ export function useCitrus() {
     }
   }
 
-  // const setupWebhooks = async (id: string) => {
-  //   const data = {
-  //     url: import.meta.env.VITE_WEBHOOK_URL,
-  //     events: ['order_created', 'subscription_created'],
-  //     secret: import.meta.env.VITE_WEBHOOK_SECRET
-  //   }
-  //   // find webhooks
-  //   const allWebhooks = await fetchWebhooks()
-  //   // console.log(allWebhooks)
-  //   // get all stores
-  //   // if webhooks found, find and update the webhook
-  //   const found = allWebhooks.find(
-  //     (webhook: any) => webhook.attributes.url === import.meta.env.VITE_WEBHOOK_URL
-  //   )
-  //   console.log(found)
-  //   // if no webhooks found, create a new webhook
-  //   if (!found) {
-  //     // create webhook
-  //     return await createWebhook(data, id)
-  //   } else {
-  //     // update webhook
-  //     return await updateWebhook(found.id, data, id)
-  //   }
-  // }
-
   const runNativeSetup = async () => {
     const { registerNotifications, addListeners } = useNotifications()
 

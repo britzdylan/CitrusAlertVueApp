@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli'
 
 const server = () => {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.VITE_SERVER) {
     return {
       url: 'http://172.20.104.53:3000',
       cleartext: true

@@ -33,9 +33,11 @@ onMounted(async () => {
     await store.getAllData()
   } catch (e) {
     showToast('Something went wrong please try again', 'error')
+    console.log(e)
+    router.replace('/')
   }
   if (!store.isAuthenticated) {
-    router.push('/register')
+    router.replace('/register')
     return
   }
   await store.stopLoading()

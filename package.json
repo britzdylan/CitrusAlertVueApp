@@ -5,7 +5,7 @@
   "scripts": {
     "generate-pwa-assets": "pwa-assets-generator --preset minimal public/AppLogo.svg",
     "dev": "vite",
-    "app": "SET HOST=172.20.104.77&&SET APP_HOST=http://172.20.104.77:3000&&vite",
+    "app": "SET  VITE_SERVER=true&&SET HOST=172.20.104.77&&SET APP_HOST=http://172.20.104.77:3000&&vite",
     "build": "SET HOST=localhost&&run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",

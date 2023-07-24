@@ -19,8 +19,12 @@ const router = useRouter()
 
 onMounted(async () => {
   await store.startLoading()
-  await store.getAllData()
-  console.log(store.isAuthenticated, 'store.isAuthenticated')
+  try {
+    await store.getAllData()
+  } catch (e) {
+    console.log(e)
+    router.replace('/')
+  }
   if (store.isAuthenticated) {
     router.replace('/sales')
     return

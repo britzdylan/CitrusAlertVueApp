@@ -105,13 +105,19 @@ export const useLemonStore = defineStore('Lemon', {
       if (this.deviceInfo?.platform === 'web') {
         const { checkPermissions } = useFirebaseMessaging()
         this.notificationEnabled = await checkPermissions()
+        console.log(this.notificationEnabled, 'notificationEnabled for WEB')
         return this.notificationEnabled
-      } else {
+      }
+      if (this.deviceInfo?.platform === 'ios' || this.deviceInfo?.platform === 'android') {
         this.notificationEnabled = await checkNotificationPermissions()
+        console.log(this.notificationEnabled, 'notificationEnabled for NATIVE')
+
         return this.notificationEnabled
       }
     },
     async getAllData(): Promise<boolean> {
+      await this.fetchDeviceInfo()
+      console.log(this.deviceInfo)
       await this.checkNotificationPermissions()
       const localData = await this.getLocalData()
       if (localData) {
@@ -125,7 +131,9 @@ export const useLemonStore = defineStore('Lemon', {
         const modeledData = await this.refreshData()
         const modeledDataKeys = Object.keys(modeledData)
         // @ts-ignore
-        if (modeledDataKeys.some((e) => modeledData[e] instanceof Error)) throw modeledData
+        if (modeledDataKeys.some((e) => modeledData[e] instanceof Error)) {
+          throw modeledData
+        }
         modeledDataKeys.forEach((key) => {
           // @ts-ignore
           this[key] = modeledData[key]
@@ -178,7 +186,7 @@ export const useLemonStore = defineStore('Lemon', {
     async fetchStores(): Promise<ApiResponse<Store[]> | Error> {
       try {
         const data = await getData('stores')
-        if (!data) throw new Error('No stores found or invalid api key')
+        if (!data) return new Error('No stores found or invalid api key')
         this.stores = data
         return data
       } catch (error: any) {
@@ -190,7 +198,7 @@ export const useLemonStore = defineStore('Lemon', {
     async fetchOrders(): Promise<ApiResponse<Order[]> | Error> {
       try {
         const data = await getData('orders?page[size]=100')
-        if (!data) throw new Error('No orders found or invalid api key')
+        if (!data) return new Error('No orders found or invalid api key')
         this.orders = data
         return data
       } catch (error: any) {

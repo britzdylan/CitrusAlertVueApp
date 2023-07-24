@@ -46,7 +46,8 @@ const enableNotifications = async () => {
     let res
     if (store.deviceInfo?.platform === 'web') {
       res = await runWebSetup()
-    } else {
+    }
+    if (store.deviceInfo?.platform === 'ios' || store.deviceInfo?.platform === 'android') {
       res = await runNativeSetup()
     }
     console.log(res, 'RESSSSSSSSSSSS')

@@ -37,7 +37,7 @@ onMounted(async () => {
     router.replace('/')
   }
   if (!store.isAuthenticated) {
-    router.replace('/register')
+    router.replace('/home')
     return
   }
   await store.stopLoading()

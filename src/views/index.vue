@@ -1,23 +1,31 @@
 <template>
-  <section class="screen justify-center">
-    <img
-      src="@/assets/images/splash.png"
-      alt="CitrusAlert"
-      class="-mb-24 w-full max-w-[280px] mx-auto"
-    />
-    <img src="@/assets/logo.svg" alt="CitrusAlert" width="200" height="200" />
-    <p class="text-center">
-      {{ subTitle }}
-    </p>
-    <LayoutFooter>
-      <router-link to="/register" class="btn btn-primary w-full">Let's get started</router-link>
-    </LayoutFooter>
+  <section class="screen justify-center bg-primary-600">
+    <img src="@/assets/logo_white.svg" alt="CitrusAlert" width="200" height="200" />
   </section>
 </template>
 
 <script setup lang="ts">
-import LayoutFooter from '@/components/Layout/footer.vue'
-const subTitle = 'The new way to stay on top of your sales game!'
+import { useLemonStore } from '@/stores/lemon'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const store = useLemonStore()
+const router = useRouter()
+
+onMounted(async () => {
+  await store.startLoading()
+  try {
+    await store.getAllData()
+  } catch (e) {
+    console.log(e)
+    router.replace('/home')
+  }
+  if (store.isAuthenticated) {
+    router.replace('/sales')
+    return
+  }
+  await store.stopLoading()
+})
 </script>
 
 <style scoped></style>

@@ -30,12 +30,18 @@ export function useCitrus() {
     }
   }
 
-  const runNativeSetup = async (): Promise<void> => {
+  const runNativeSetup = async (): Promise<null | string> => {
     const { registerNotifications, addListeners } = useNotifications()
 
-    const res = await registerNotifications()
-    await addListeners()
-    return res
+    await registerNotifications()
+    try {
+      const token = await addListeners()
+      console.log('Token: ', token)
+      return token
+    } catch (err) {
+      console.error('Failed to register: ', err)
+      return null
+    }
   }
 
   const runWebSetup = async (): Promise<string> => {

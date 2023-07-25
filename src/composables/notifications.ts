@@ -1,27 +1,30 @@
 import { PushNotifications } from '@capacitor/push-notifications'
+import { LocalNotifications } from '@capacitor/local-notifications'
+
 export function useNotifications() {
-  const addListeners = async () => {
-    await PushNotifications.addListener('registration', (token) => {
-      console.info('Registration token: ', token.value)
-    })
+  const addListeners = () => {
+    return new Promise<string>((resolve, reject) => {
+      PushNotifications.addListener('registration', (t) => {
+        resolve(t.value)
+      })
 
-    await PushNotifications.addListener('registrationError', (err) => {
-      console.error('Registration error: ', err.error)
-    })
+      PushNotifications.addListener('registrationError', (err) => {
+        console.error('Registration error: ', err.error)
+        reject(err.error)
+      })
 
-    await PushNotifications.addListener('pushNotificationReceived', (notification) => {
-      console.log('Push notification received: ', notification)
-    })
+      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        console.log('Push notification received: ', notification)
+      })
 
-    await PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
-      console.log(
-        'Push notification action performed',
-        notification.actionId,
-        notification.inputValue
-      )
+      PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
+        console.log(
+          'Push notification action performed',
+          notification.actionId,
+          notification.inputValue
+        )
+      })
     })
-
-    return true
   }
 
   const registerNotifications = async () => {
@@ -39,9 +42,9 @@ export function useNotifications() {
   }
 
   const checkNotificationPermissions = async () => {
-    const permStatus = await PushNotifications.checkPermissions()
+    const permStatus = await LocalNotifications.checkPermissions()
     console.log('permStatus', permStatus)
-    return permStatus.receive === 'granted'
+    return permStatus.display === 'granted'
   }
 
   const getDeliveredNotifications = async () => {

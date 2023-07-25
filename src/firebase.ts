@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import { getMessaging } from 'firebase/messaging'
-import { getFirestore, collection } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
 
 // import { useToast } from './composables/toast'
 // TODO: Add SDKs for Firebase products that you want to use
@@ -22,5 +22,10 @@ export const firebaseApp = initializeApp({
   measurementId: 'G-Y8VB1EDTCM'
 })
 export const analytics = getAnalytics(firebaseApp)
-export const messaging = getMessaging(firebaseApp)
+export let messaging: any = null
+if (process.env.VITE_PLATFORM === 'web') {
+  messaging = getMessaging(firebaseApp)
+}
+
+// export const messaging;
 export const db = getFirestore(firebaseApp)

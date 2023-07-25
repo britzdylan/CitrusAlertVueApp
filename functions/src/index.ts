@@ -1,38 +1,40 @@
 interface OrderAttributes {
-  id: number
-  type: string
-  attributes: {
-    updated_at: string
-    created_at: string
-    test_mode: boolean
-    store_id: number
-    customer_id: number
-    identifier: string
-    order_number: number
-    user_name: string
-    user_email: string
-    currency: string
-    currency_rate: string
-    tax_name: string | null
-    tax_rate: string
-    status: string
-    status_formatted: string
-    refunded: boolean
-    refunded_at: null
-    subtotal: number
-    discount_total: number
-    tax: number
-    total: number
-    subtotal_usd: number
-    discount_total_usd: number
-    tax_usd: number
-    total_usd: number
-    subtotal_formatted: string
-    discount_total_formatted: string
-    tax_formatted: string
-    total_formatted: string
-    urls: {
-      receipt: string
+  data: {
+    id: number
+    type: string
+    attributes: {
+      updated_at: string
+      created_at: string
+      test_mode: boolean
+      store_id: number
+      customer_id: number
+      identifier: string
+      order_number: number
+      user_name: string
+      user_email: string
+      currency: string
+      currency_rate: string
+      tax_name: string | null
+      tax_rate: string
+      status: string
+      status_formatted: string
+      refunded: boolean
+      refunded_at: null
+      subtotal: number
+      discount_total: number
+      tax: number
+      total: number
+      subtotal_usd: number
+      discount_total_usd: number
+      tax_usd: number
+      total_usd: number
+      subtotal_formatted: string
+      discount_total_formatted: string
+      tax_formatted: string
+      total_formatted: string
+      urls: {
+        receipt: string
+      }
     }
   }
 }
@@ -48,12 +50,12 @@ exports.sendPushNotification = onRequest(
     cors: true,
   },
   async (req, res) => {
-    const signature = Buffer.from(req.get("X-Signature") || "", "utf8");
+    // const signature = Buffer.from(req.get("X-Signature") || "", "utf8");
 
-    if (!signature) {
-      res.status(400).send("Invalid secret");
-      return;
-    }
+    // if (!signature) {
+    //   res.status(400).send("Invalid secret");
+    //   return;
+    // }
     const userId = req.query.id;
     if (!userId) {
       res.status(400).send("Invalid id");
@@ -74,29 +76,29 @@ exports.sendPushNotification = onRequest(
     }
     const newOrder = {...req.body} as OrderAttributes;
 
-    console.log(newOrder);
-    if (!deviceToken || !newOrder.attributes) {
+    // console.log(newOrder);
+    if (!deviceToken || !newOrder.data.attributes) {
       res.status(400).send("Missing device token or order");
       return;
     }
 
-    if (newOrder.attributes.status !== "paid") {
+    if (newOrder.data.attributes.status !== "paid") {
       res.status(200).send("Order is not paid");
       return;
     }
 
     const message = {
       notification: {
-        title: `New Order for ${newOrder.attributes.total_formatted}`,
-        body: `Order #${newOrder.attributes.order_number} was just placed`,
+        title: `New Order for ${newOrder.data.attributes.total_formatted}`,
+        body: `Order #${newOrder.data.attributes.order_number} was just placed`,
       },
       token: deviceToken,
     };
 
     try {
-      const response = await messaging().send(message);
-      console.log("Successfully sent message:", response);
-      res.status(200).send("Notification sent successfully");
+      console.log("Sending message:", message);
+      await messaging().send(message);
+      res.status(200).json(message);
     } catch (error) {
       console.log("Error sending message:", error);
       res.status(500).send("Notification failed");

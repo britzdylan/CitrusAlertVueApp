@@ -12,6 +12,7 @@ export const useFirebaseMessaging = () => {
       serviceWorkerRegistration: newSw
     })
       .then((currentToken) => {
+        console.log('currentToken', currentToken);
         if (currentToken) {
           // console.log('currentToken', currentToken)
           return currentToken

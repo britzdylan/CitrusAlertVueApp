@@ -11,6 +11,7 @@
     "live-reload": "SET VITE_PLATFORM=native&& SET VITE_SERVER=true&&SET HOST=172.20.104.112&&SET APP_HOST=http://172.20.104.112:3000&&run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "SET PLATFORM=web&& vite build",
+    "render": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",

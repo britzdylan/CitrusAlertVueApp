@@ -7,12 +7,12 @@ export const useFirebaseMessaging = () => {
   const requestPermissions = async () => {
     const newSw = await navigator.serviceWorker.register('../firebase-messaging-sw.js')
 
-    return getToken(messaging, {
+    return await getToken(messaging, {
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY || '',
       serviceWorkerRegistration: newSw
     })
       .then((currentToken) => {
-        console.log('currentToken', currentToken);
+        console.log('currentToken', currentToken)
         if (currentToken) {
           // console.log('currentToken', currentToken)
           return currentToken

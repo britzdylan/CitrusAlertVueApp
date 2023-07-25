@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "generate-pwa-assets": "pwa-assets-generator --preset minimal public/AppLogo.svg",
-    "dev": "SET PLATFORM=web&& vite",
+    "dev": "SET VITE_PLATFORM=web&& vite",
     "app-dev": "SET VITE_PLATFORM=native&& vite",
     "app": "SET  VITE_SERVER=true&&SET HOST=172.20.104.112&&SET APP_HOST=http://172.20.104.112:3000&&vite",
     "build": "SET VITE_PLATFORM=native&& SET HOST=localhost&&run-p type-check build-only",

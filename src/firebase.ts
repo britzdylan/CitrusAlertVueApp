@@ -23,7 +23,7 @@ export const firebaseApp = initializeApp({
 })
 export const analytics = getAnalytics(firebaseApp)
 export let messaging: any = null
-if (process.env.VITE_PLATFORM === 'web') {
+if (import.meta.env.VITE_PLATFORM === 'web') {
   messaging = getMessaging(firebaseApp)
 }
 

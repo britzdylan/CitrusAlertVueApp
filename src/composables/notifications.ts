@@ -1,61 +1,62 @@
-import { PushNotifications } from '@capacitor/push-notifications'
+import { onMounted } from 'vue'
+import {
+  PushNotifications,
+  type ActionPerformed,
+  type PushNotificationSchema,
+  type Token
+} from '@capacitor/push-notifications'
 import { LocalNotifications } from '@capacitor/local-notifications'
+import { Device } from '@capacitor/device'
 
 export function useNotifications() {
-  const addListeners = () => {
-    return new Promise<string>((resolve, reject) => {
-      PushNotifications.addListener('registration', (t) => {
-        resolve(t.value)
-      })
+  const initialize = async () => {
+    // Check permission
+    const permission = await PushNotifications.checkPermissions()
+    if (permission.receive === 'prompt') {
+      // Request permission
+      await PushNotifications.requestPermissions()
+    }
 
-      PushNotifications.addListener('registrationError', (err) => {
-        console.error('Registration error: ', err.error)
-        reject(err.error)
-      })
+    // If on Android, check if notifications are enabled in system settings
+    if ((await Device.getInfo()).platform === 'android') {
+      const notifEnabled = await LocalNotifications.checkPermissions()
+      if (!notifEnabled) {
+        // Show a message to the user explaining that they need to enable notifications
+        console.log('opening app settings')
+      }
+    }
 
-      PushNotifications.addListener('pushNotificationReceived', (notification) => {
-        console.log('Push notification received: ', notification)
-      })
+    // Register with the Apple / Google push notification services
+    PushNotifications.register()
 
-      PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
-        console.log(
-          'Push notification action performed',
-          notification.actionId,
-          notification.inputValue
-        )
-      })
+    // On success, we should be able to receive notifications
+    PushNotifications.addListener('registration', (token: Token) => {
+      console.log('Push registration success, token: ' + token.value)
     })
+
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError', (error: any) => {
+      console.log('Error on registration: ' + JSON.stringify(error))
+    })
+
+    // Show us the notification payload if the app is open on our device
+    PushNotifications.addListener(
+      'pushNotificationReceived',
+      (notification: PushNotificationSchema) => {
+        console.log('Push received: ' + JSON.stringify(notification))
+      }
+    )
+
+    // Method called when tapping on a notification
+    PushNotifications.addListener(
+      'pushNotificationActionPerformed',
+      (notification: ActionPerformed) => {
+        console.log('Push action performed: ' + JSON.stringify(notification))
+      }
+    )
   }
 
-  const registerNotifications = async () => {
-    let permStatus = await PushNotifications.checkPermissions()
-
-    if (permStatus.receive === 'prompt') {
-      permStatus = await PushNotifications.requestPermissions()
-    }
-
-    if (permStatus.receive !== 'granted') {
-      throw new Error('User denied permissions!')
-    }
-
-    return await PushNotifications.register()
-  }
-
-  const checkNotificationPermissions = async () => {
-    const permStatus = await LocalNotifications.checkPermissions()
-    console.log('permStatus', permStatus)
-    return permStatus.display === 'granted'
-  }
-
-  const getDeliveredNotifications = async () => {
-    const notificationList = await PushNotifications.getDeliveredNotifications()
-    console.log('delivered notifications', notificationList)
-  }
-
-  return {
-    addListeners,
-    registerNotifications,
-    getDeliveredNotifications,
-    checkNotificationPermissions
-  }
+  onMounted(() => {
+    initialize()
+  })
 }

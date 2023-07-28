@@ -3,11 +3,9 @@ import { useStorage } from '@/composables/storage'
 import { useToast } from '@/composables/toast'
 import { useApi } from '@/composables/api'
 import { useNotifications } from '@/composables/notifications'
-import { useFirebaseMessaging } from './webMessaging'
-// import { useLemonStore } from '@/stores/lemon'
 
 export function useCitrus() {
-  const { set, get } = useStorage()
+  const { set } = useStorage()
   const { encrypt } = useCrypto()
   const { showToast } = useToast()
   const { getData } = useApi()
@@ -44,14 +42,14 @@ export function useCitrus() {
     }
   }
 
-  const runWebSetup = async (): Promise<string> => {
-    const { requestPermissions, addListeners } = useFirebaseMessaging()
+  // const runWebSetup = async (): Promise<string> => {
+  //   const { requestPermissions, addListeners } = useFirebaseMessaging()
 
-    const res: string = await requestPermissions()
+  //   const res: string = await requestPermissions()
 
-    await addListeners()
-    return res
-  }
+  //   await addListeners()
+  //   return res
+  // }
 
-  return { testKey, runWebSetup, runNativeSetup }
+  return { testKey, runNativeSetup }
 }

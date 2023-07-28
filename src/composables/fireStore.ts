@@ -21,7 +21,7 @@ export function useFireStore() {
 
     return runTransaction(db, async (transaction) => {
       const doc = await transaction.get(docRef)
-      console.log(doc.data(), '//////////////////////////// ')
+      // console.log(doc.data(), '//////////////////////////// ')
       if (!doc.exists()) {
         throw new Error('Counter document does not exist')
       }

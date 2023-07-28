@@ -10,6 +10,7 @@ import { Device } from '@capacitor/device'
 
 export function useNotifications() {
   const initialize = async () => {
+    if ((await Device.getInfo()).platform === 'web') return
     // Check permission
     const permission = await PushNotifications.checkPermissions()
     if (permission.receive === 'prompt') {

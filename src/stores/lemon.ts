@@ -8,9 +8,7 @@ import type { Webhook, Order, User, Store, ApiResponse } from '@/types'
 
 const { getData, postData, deleteData, updateData } = useApi()
 const { showToast } = useToast()
-const { get, remove } = useStorage()
-
-const { checkNotificationPermissions } = useNotifications()
+const { get, remove, set } = useStorage()
 
 interface DeviceInfo {
   isVirtual: boolean
@@ -94,17 +92,7 @@ export const useLemonStore = defineStore('Lemon', {
       }
       return false
     },
-    async checkNotificationPermissions() {
-      if (this.deviceInfo?.platform === 'ios' || this.deviceInfo?.platform === 'android') {
-        this.notificationEnabled = await checkNotificationPermissions()
-        console.log(this.notificationEnabled, 'notificationEnabled for NATIVE')
-        
-        return this.notificationEnabled
-      }
-    },
     async getAllData(): Promise<boolean> {
-      await this.fetchDeviceInfo()
-      await this.checkNotificationPermissions()
       const localData = await this.getLocalData()
       if (localData) {
         Object.keys(localData).forEach((key) => {
@@ -133,31 +121,31 @@ export const useLemonStore = defineStore('Lemon', {
       // const lastFetch = new Date(localData.lastFetch)
       // const diff = Math.abs(now.getTime() - lastFetch.getTime())
       // const minutes = Math.floor(diff / 1000 / 60)
-      
+
       // if (minutes < 0) {
-        //   return true
-        // }
-        
-        const data = await Promise.all([
-          this.fetchUser(),
-          this.fetchStores(),
-          this.fetchOrders(),
-          this.fetchSubscriptions(),
-          this.fetchWebhooks(),
-          this.fetchDeviceInfo()
-        ])
-        // @ts-ignore
-        const [user, stores, orders, subscriptions, webhooks] = data
-        const modeledData = {
-          user: user,
-          stores: stores,
-          orders: orders,
-          subscriptions: subscriptions,
-          webhooks: webhooks,
-          lastFetch: new Date()
-        }
-        
-        return modeledData
+      //   return true
+      // }
+
+      const data = await Promise.all([
+        this.fetchUser(),
+        this.fetchStores(),
+        this.fetchOrders(),
+        this.fetchSubscriptions(),
+        this.fetchWebhooks(),
+        this.fetchDeviceInfo()
+      ])
+      // @ts-ignore
+      const [user, stores, orders, subscriptions, webhooks] = data
+      const modeledData = {
+        user: user,
+        stores: stores,
+        orders: orders,
+        subscriptions: subscriptions,
+        webhooks: webhooks,
+        lastFetch: new Date()
+      }
+
+      return modeledData
     },
     // alles goed
     async fetchDeviceInfo() {
@@ -167,24 +155,24 @@ export const useLemonStore = defineStore('Lemon', {
     },
     async setupWebhooks(id: number) {
       // const secret = () => {
-        //   let result = ''
-        //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        //   const charactersLength = characters.length
-        //   for (let i = 0; i < 5; i++) {
-          //     result += characters.charAt(Math.floor(Math.random() * charactersLength))
-          //   }
-          //   return `${result}-${id}`
-          // }
-          const data = {
-            url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${id}`,
-            events: ['order_created', 'subscription_created'],
-            secret: import.meta.env.VITE_WEBHOOK_SECRET,
-            test_mode: process.env.NODE_ENV === 'development'
-          }
-          console.log(data)
-          
-          // loop through stores and create webhooks
-          const stores = this.stores?.data
+      //   let result = ''
+      //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      //   const charactersLength = characters.length
+      //   for (let i = 0; i < 5; i++) {
+      //     result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      //   }
+      //   return `${result}-${id}`
+      // }
+      const data = {
+        url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${id}`,
+        events: ['order_created', 'subscription_created'],
+        secret: import.meta.env.VITE_WEBHOOK_SECRET,
+        test_mode: process.env.NODE_ENV === 'development'
+      }
+      console.log(data)
+
+      // loop through stores and create webhooks
+      const stores = this.stores?.data
       if (!stores) return
 
       // find webhooks

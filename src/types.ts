@@ -133,9 +133,9 @@ export interface Store extends Base<StoreAttributes> {}
 
 export interface Webhook extends Base<WebhookAttributes> {}
 
-export interface ApiResponse<Type> {
+export interface ApiResponse<T> {
   meta: Meta
   jsonapi: Jsonapi
   links: Links
-  data: Type
+  data: T
 }

@@ -7,11 +7,7 @@
       {{ getText() }}
     </h1>
 
-    <Button
-      v-if="!isNotificationEnabled"
-      @click="enableNotifications"
-      :loading="loading"
-      class="btn-primary w-full"
+    <Button v-if="!isNotificationEnabled" :loading="loading" class="btn-primary w-full"
       >Enable Push Notifications</Button
     >
   </section>
@@ -19,14 +15,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useCitrus } from '@/composables/citrus'
-import { useToast } from '@/composables/toast'
-import { useFireStore } from '@/composables/fireStore'
 import { useLemonStore } from '@/stores/lemon'
 
-const { runWebSetup, runNativeSetup } = useCitrus()
-const { showToast } = useToast()
-const { createUser, getNextUserId } = useFireStore()
 const store = useLemonStore()
 
 const loading = ref(false)
@@ -42,34 +32,34 @@ const getText = () => {
     : 'Please enable push notifications on your device.'
 }
 
-const enableNotifications = async () => {
-  loading.value = true
-  try {
-    let res
-    if (store.deviceInfo?.platform === 'web') {
-      res = await runWebSetup()
-    }
-    if (store.deviceInfo?.platform === 'ios' || store.deviceInfo?.platform === 'android') {
-      res = await runNativeSetup()
-    }
-    // console.log(res, 'RESSSSSSSSSSSS')
-    if (res) {
-      showToast('Push notifications enabled successfully.', 'success')
-      await store.checkNotificationPermissions()
-      // save to db
-      const userId = await getNextUserId()
-      const webhooks = await store.setupWebhooks(userId)
-      if (webhooks instanceof Error) throw new Error('Something went wrong. Please try again.')
-      if (!webhooks) throw new Error('Something went wrong. Please try again.')
-      await createUser(res, userId)
-      loading.value = false
-    }
-  } catch (error) {
-    showToast('Something went wrong. Please try again.', 'error')
-    console.log(error)
-    loading.value = false
-  }
-}
+// const enableNotifications = async () => {
+//   loading.value = true
+//   try {
+//     let res
+//     if (store.deviceInfo?.platform === 'web') {
+//       res = await runWebSetup()
+//     }
+//     if (store.deviceInfo?.platform === 'ios' || store.deviceInfo?.platform === 'android') {
+//       res = await runNativeSetup()
+//     }
+//     // console.log(res, 'RESSSSSSSSSSSS')
+//     if (res) {
+//       showToast('Push notifications enabled successfully.', 'success')
+//       await store.checkNotificationPermissions()
+//       // save to db
+//       const userId = await getNextUserId()
+//       const webhooks = await store.setupWebhooks(userId)
+//       if (webhooks instanceof Error) throw new Error('Something went wrong. Please try again.')
+//       if (!webhooks) throw new Error('Something went wrong. Please try again.')
+//       await createUser(res, userId)
+//       loading.value = false
+//     }
+//   } catch (error) {
+//     showToast('Something went wrong. Please try again.', 'error')
+//     console.log(error)
+//     loading.value = false
+//   }
+// }
 </script>
 
 <style scoped></style>

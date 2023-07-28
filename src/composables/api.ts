@@ -1,6 +1,7 @@
 import { useStorage } from './storage'
 import { useCrypto } from './crypto'
-import type { ApiResponse } from '../types'
+import type { ApiResponse, User } from '../types'
+
 export function useApi() {
   const { get } = useStorage()
   const { decrypt } = useCrypto()
@@ -18,8 +19,15 @@ export function useApi() {
     Accept: 'application/vnd.api+json',
     'Content-Type': 'application/vnd.api+json'
   }
+  const testApiKey = async (token: string): Promise<ApiResponse<User | null>> => {
+    const response = await fetch(`${base_url}/users/me`, {
+      headers: { ...header, Authorization: `Bearer ${token}` },
+      method: 'GET'
+    })
+    return await response.json()
+  }
   // use fetch to get data from the API
-  const getData = async (endPoint: string): Promise<ApiResponse<any[]>> => {
+  const getData = async <T>(endPoint: string): Promise<ApiResponse<T>> => {
     const { url, token } = await getToken(endPoint)
 
     const response = await fetch(url, {
@@ -62,5 +70,5 @@ export function useApi() {
     return await response.json()
   }
 
-  return { getData, postData, deleteData, updateData }
+  return { getData, postData, deleteData, updateData, testApiKey }
 }

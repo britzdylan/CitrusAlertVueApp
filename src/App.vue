@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { useNotifications } from './composables/notifications'
-
-useNotifications()
 </script>
 
 <template>

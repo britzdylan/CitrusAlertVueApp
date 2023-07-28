@@ -6,11 +6,15 @@ import {
   type Token
 } from '@capacitor/push-notifications'
 import { LocalNotifications } from '@capacitor/local-notifications'
-import { Device } from '@capacitor/device'
+import User from '@/models/user'
+import { useLemonStore } from '@/stores/lemon'
+import { useStorage } from '@/composables/storage'
 
 export function useNotifications() {
   const initialize = async () => {
-    if ((await Device.getInfo()).platform === 'web') return
+    const { user, deviceInfo } = useLemonStore()
+    const { get } = useStorage()
+    if (deviceInfo?.platform === 'web') return
     // Check permission
     const permission = await PushNotifications.checkPermissions()
     if (permission.receive === 'prompt') {
@@ -19,10 +23,10 @@ export function useNotifications() {
     }
 
     // If on Android, check if notifications are enabled in system settings
-    if ((await Device.getInfo()).platform === 'android') {
+    if (deviceInfo?.platform === 'android') {
       const notifEnabled = await LocalNotifications.checkPermissions()
       if (!notifEnabled) {
-        // Show a message to the user explaining that they need to enable notifications
+        // TODO: Show a message to the user explaining that they need to enable notifications
         console.log('opening app settings')
       }
     }
@@ -31,7 +35,16 @@ export function useNotifications() {
     PushNotifications.register()
 
     // On success, we should be able to receive notifications
-    PushNotifications.addListener('registration', (token: Token) => {
+    PushNotifications.addListener('registration', async (token: Token) => {
+      // send token to store and save user in fireStore
+      // create webhook first
+      const encryptedKey = await get('api_key')
+      // User.notificationUpdate({
+      //   id: Number(user?.data?.id),
+      //   notif_token: token.value,
+      //   api_key: encryptedKey,
+      //   webhook_id:
+      // })
       console.log('Push registration success, token: ' + token.value)
     })
 

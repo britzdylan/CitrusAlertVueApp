@@ -29,15 +29,18 @@
 </template>
 
 <script setup lang="ts">
-import { useCitrus } from '@/composables/citrus'
+import FireUser from '@/models/user'
 import { useToast } from '@/composables/toast'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useApi } from '@/composables/api'
+import { useCrypto } from '@/composables/crypto'
 
+const { encrypt } = useCrypto()
+const { testApiKey } = useApi()
 const router = useRouter()
 
 const { showToast } = useToast()
-const { testKey } = useCitrus()
 // TODO fix this
 const api_key = ref(import.meta.env.VITE_API_KEY || '')
 const error = ref(false)
@@ -46,6 +49,25 @@ const loading = ref(false)
 const subTitle = 'Create your account'
 const warning =
   'Please note that your API key is top secret and we take extra precautions to keep it safe. Do not share it with anyone.'
+
+const testKey = async (api_key: string) => {
+  try {
+    const { data } = await testApiKey(api_key)
+    if (data) {
+      showToast('API Key Verified', 'success')
+    } else {
+      throw new Error('Invalid API key')
+    }
+    const encrypted = await encrypt(api_key, import.meta.env.VITE_SECRET)
+    let user = await FireUser.init({ id: Number(data.id), api_key: encrypted })
+    await user.save()
+    return true
+  } catch (e) {
+    console.log(e)
+    // @ts-ignore
+    return false
+  }
+}
 
 const register = async () => {
   loading.value = true

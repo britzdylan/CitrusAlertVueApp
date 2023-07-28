@@ -20,7 +20,7 @@ interface DeviceInfo {
   webViewVersion: string
 }
 interface State {
-  user: ApiResponse<User[]> | null
+  user: ApiResponse<User> | null
   stores: ApiResponse<Store[]> | null
   orders: ApiResponse<Order[]> | null
   subscriptions: ApiResponse<Order[]> | null
@@ -83,6 +83,58 @@ export const useLemonStore = defineStore('Lemon', {
     }
   },
   actions: {
+    async setupWebhooks(id: number) {
+      // const secret = () => {
+      //   let result = ''
+      //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      //   const charactersLength = characters.length
+      //   for (let i = 0; i < 5; i++) {
+      //     result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      //   }
+      //   return `${result}-${id}`
+      // }
+      const data = {
+        url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${id}`,
+        events: ['order_created', 'subscription_created'],
+        secret: import.meta.env.VITE_WEBHOOK_SECRET,
+        // @ts-ignore
+        test_mode: process.env.NODE_ENV === 'development'
+      }
+      console.log(data)
+
+      // loop through stores and create webhooks
+      const stores = this.stores?.data
+      if (!stores) return
+
+      // find webhooks
+      const allWebhooks = await this.fetchWebhooks()
+
+      if (allWebhooks instanceof Error) return allWebhooks
+
+      const found = allWebhooks?.data?.find(
+        (webhook: Webhook) => webhook.id === import.meta.env.VITE_WEBHOOK_URL
+      )
+      console.log(found)
+
+      // if no webhooks found, create a new webhook
+      if (!found) {
+        // create webhook
+        const webhooks = await Promise.all(
+          stores.map(async (store: Store) => {
+            return await this.createWebhook(data, store.id)
+          })
+        )
+        return webhooks
+      } else {
+        // update webhook
+        const webhooks = await Promise.all(
+          stores.map(async (store: Store) => {
+            return await this.updateWebhook(found.id, data, store.id)
+          })
+        )
+        return webhooks
+      }
+    },
     async getLocalData() {
       const localData = await get('citrus_data')
       if (localData) {
@@ -147,66 +199,14 @@ export const useLemonStore = defineStore('Lemon', {
 
       return modeledData
     },
-    // alles goed
     async fetchDeviceInfo() {
       // @ts-ignore
       const res = await Device.getInfo()
       this.deviceInfo = res
     },
-    async setupWebhooks(id: number) {
-      // const secret = () => {
-      //   let result = ''
-      //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-      //   const charactersLength = characters.length
-      //   for (let i = 0; i < 5; i++) {
-      //     result += characters.charAt(Math.floor(Math.random() * charactersLength))
-      //   }
-      //   return `${result}-${id}`
-      // }
-      const data = {
-        url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${id}`,
-        events: ['order_created', 'subscription_created'],
-        secret: import.meta.env.VITE_WEBHOOK_SECRET,
-        test_mode: process.env.NODE_ENV === 'development'
-      }
-      console.log(data)
-
-      // loop through stores and create webhooks
-      const stores = this.stores?.data
-      if (!stores) return
-
-      // find webhooks
-      const allWebhooks = await this.fetchWebhooks()
-
-      if (allWebhooks instanceof Error) return allWebhooks
-
-      const found = allWebhooks?.data?.find(
-        (webhook: Webhook) => webhook.attributes.url === import.meta.env.VITE_WEBHOOK_URL
-      )
-      console.log(found)
-
-      // if no webhooks found, create a new webhook
-      if (!found) {
-        // create webhook
-        const webhooks = await Promise.all(
-          stores.map(async (store: Store) => {
-            return await this.createWebhook(data, store.id)
-          })
-        )
-        return webhooks
-      } else {
-        // update webhook
-        const webhooks = await Promise.all(
-          stores.map(async (store: Store) => {
-            return await this.updateWebhook(found.id, data, store.id)
-          })
-        )
-        return webhooks
-      }
-    },
-    async fetchUser(): Promise<ApiResponse<User[]> | Error> {
+    async fetchUser(): Promise<ApiResponse<User> | Error> {
       try {
-        const data = await getData('users/me')
+        const data = await getData<User>('users/me')
         if (!data) throw new Error('No user found or invalid api key')
         this.user = data
         return data
@@ -216,7 +216,7 @@ export const useLemonStore = defineStore('Lemon', {
     },
     async fetchStores(): Promise<ApiResponse<Store[]> | Error> {
       try {
-        const data = await getData('stores')
+        const data = await getData<Store[]>('stores')
         if (!data) return new Error('No stores found or invalid api key')
         this.stores = data
         return data
@@ -228,7 +228,7 @@ export const useLemonStore = defineStore('Lemon', {
 
     async fetchOrders(): Promise<ApiResponse<Order[]> | Error> {
       try {
-        const data = await getData('orders?page[size]=100')
+        const data = await getData<Order[]>('orders?page[size]=100')
         if (!data) return new Error('No orders found or invalid api key')
         this.orders = data
         return data
@@ -240,7 +240,7 @@ export const useLemonStore = defineStore('Lemon', {
 
     async fetchSubscriptions(): Promise<ApiResponse<Order[]> | Error> {
       try {
-        const data = await getData('subscriptions')
+        const data = await getData<Order[]>('subscriptions')
         if (!data) throw new Error('No subscriptions found or invalid api key')
         this.subscriptions = data
         return data
@@ -250,7 +250,7 @@ export const useLemonStore = defineStore('Lemon', {
     },
     async fetchWebhooks(): Promise<ApiResponse<Webhook[]> | Error> {
       try {
-        const data = await getData('webhooks')
+        const data = await getData<Webhook[]>('webhooks')
         if (!data) throw new Error('No webhooks found or invalid api key')
         this.webhooks = data
         return data
@@ -326,7 +326,7 @@ export const useLemonStore = defineStore('Lemon', {
     },
     async getWebHook(id: string) {
       try {
-        const { data } = await getData(`webhooks/${id}`)
+        const { data } = await getData<Webhook>(`webhooks/${id}`)
         if (!data) throw new Error('No webhook found or invalid api key')
         return data
       } catch (error) {

@@ -28,19 +28,19 @@ export function useCitrus() {
     }
   }
 
-  const runNativeSetup = async (): Promise<null | string> => {
-    const { registerNotifications, addListeners } = useNotifications()
+  // const runNativeSetup = async (): Promise<null | string> => {
+  //   const { registerNotifications, addListeners } = useNotifications()
 
-    await registerNotifications()
-    try {
-      const token = await addListeners()
-      console.log('Token: ', token)
-      return token
-    } catch (err) {
-      console.error('Failed to register: ', err)
-      return null
-    }
-  }
+  //   await registerNotifications()
+  //   try {
+  //     const token = await addListeners()
+  //     console.log('Token: ', token)
+  //     return token
+  //   } catch (err) {
+  //     console.error('Failed to register: ', err)
+  //     return null
+  //   }
+  // }
 
   // const runWebSetup = async (): Promise<string> => {
   //   const { requestPermissions, addListeners } = useFirebaseMessaging()
@@ -51,5 +51,5 @@ export function useCitrus() {
   //   return res
   // }
 
-  return { testKey, runNativeSetup }
+  return { testKey }
 }

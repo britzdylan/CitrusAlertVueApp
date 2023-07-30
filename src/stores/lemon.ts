@@ -75,11 +75,6 @@ export const useLemonStore = defineStore('Lemon', {
     }
   },
   actions: {
-    async runStoreSetup(getData: boolean = false) {
-      if (getData) {
-        await this.getAllData()
-      }
-    },
     async setupWebhooks(FireStoreUserId: number, webHooks: string[]) {
       const data = {
         url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${FireStoreUserId}`,
@@ -95,6 +90,7 @@ export const useLemonStore = defineStore('Lemon', {
 
       // find webhooks
       let allWebhooks = await Promise.all(webHooks.map(this.getWebHook))
+      console.log('all webhooks', allWebhooks)
       if (allWebhooks.some((w) => w instanceof Error)) throw allWebhooks
       if (allWebhooks.some((w) => 'status' in w)) {
         allWebhooks = allWebhooks.filter((w) => isApiResponse<Webhook>(w))
@@ -131,8 +127,12 @@ export const useLemonStore = defineStore('Lemon', {
 
         return result.some((r) => !isApiResponse<Webhook>(r)) ? false : result
       } else {
-        let result = await Promise.all(stores.map((store) => this.createWebhook(data, store.id)))
-        return result.some((r) => !isApiResponse<Webhook>(r)) ? false : result
+        let result = await Promise.all(
+          stores.map(async (store) => await this.createWebhook(data, store.id))
+        )
+        console.log('result', result)
+        // @ts-ignore
+        return result.some((r) => r.status) ? false : result
       }
     },
     async getLocalData() {

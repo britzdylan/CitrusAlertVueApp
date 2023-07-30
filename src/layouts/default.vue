@@ -28,12 +28,14 @@ const store = useLemonStore()
 const loading = computed(() => store.loading)
 const router = useRouter()
 const { showToast } = useToast()
+const runNotifications = useNotifications()
+
 onMounted(async () => {
   await store.startLoading()
   try {
     await store.getAllData()
     // check notifications here
-    useNotifications()
+    runNotifications()
   } catch (e) {
     showToast('Something went wrong please try again', 'error')
     console.log(e)

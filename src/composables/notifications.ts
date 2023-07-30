@@ -1,4 +1,3 @@
-import { onMounted } from 'vue'
 import {
   PushNotifications,
   type ActionPerformed,
@@ -6,15 +5,9 @@ import {
   type Token
 } from '@capacitor/push-notifications'
 import { LocalNotifications } from '@capacitor/local-notifications'
-import User from '@/models/user'
 import { useLemonStore } from '@/stores/lemon'
-
-interface NotifPayload {
-  id: number
-  api_key?: string
-  notif_token: string
-  webhooks?: string[]
-}
+import { useFireUser } from './fireUser'
+const { get, fireUser, save, updateOrCreate } = useFireUser()
 
 export function useNotifications() {
   const initialize = async () => {
@@ -30,11 +23,14 @@ export function useNotifications() {
     // TODO: if permission is denied then find user and delete notif_token && webhooks
 
     if (permission.receive === 'denied') {
-      const u = await User.get(Number(user?.data?.id))
-      if (u) {
-        u.notif_token = ''
-        u.webhooks = []
-        await u.save(u)
+      await get(Number(user?.data?.id))
+      if (fireUser) {
+        let data = {
+          id: fireUser.value?.id || Number(user?.data?.id),
+          notif_token: '',
+          webhooks: []
+        }
+        await save(data)
       }
       alert('permission denied, please enable notifications in settings')
     }
@@ -53,15 +49,14 @@ export function useNotifications() {
     PushNotifications.addListener('registration', async (token: Token) => {
       // updateOrCreate webhooks
       try {
-        let u = await User.get(Number(user?.data?.id))
-        if (!u) throw new Error('User not found')
-        let result = await setupWebhooks(Number(user?.data?.id), u?.webhooks || [])
+        get(Number(user?.data?.id))
+        let result = await setupWebhooks(Number(user?.data?.id), fireUser.value?.webhooks || [])
         if (!result) throw new Error('Error setting up webhooks')
-        User.updateOrCreate<NotifPayload>({
+        updateOrCreate({
           id: Number(user?.data?.id),
           notif_token: token.value,
           // @ts-ignore
-          webhooks: result.data.map((webhook) => webhook.id)
+          webhooks: result.map((webhook) => webhook.data.id)
         })
       } catch (error) {
         // TODO: handle error
@@ -91,7 +86,5 @@ export function useNotifications() {
     )
   }
 
-  onMounted(() => {
-    initialize()
-  })
+  return initialize
 }

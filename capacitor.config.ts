@@ -1,14 +1,5 @@
 import { CapacitorConfig } from '@capacitor/cli'
 
-const server = () => {
-  if (process.env.VITE_SERVER) {
-    return {
-      url: 'http://172.20.104.53:3000',
-      cleartext: true
-    }
-  }
-}
-
 const config: CapacitorConfig = {
   appId: 'com.citrusalert.app',
   appName: 'Citrus Alert',
@@ -23,7 +14,10 @@ const config: CapacitorConfig = {
       sound: 'beep.wav'
     }
   },
-  ...server()
+  server: {
+    url: 'http://172.27.16.1:3000',
+    cleartext: true
+  }
 }
 
 export default config

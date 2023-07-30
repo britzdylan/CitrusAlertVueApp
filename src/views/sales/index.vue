@@ -1,7 +1,7 @@
 <template>
   <section class="screen items-center pt-0 px-0">
     <header class="w-full py-10 rounded-b-3xl bg-zinc-900 text-zinc-300 text-center mb-8">
-      <p class="">Total Lifetime Revenue</p>
+      <p class="">Total Lifetime Revenue UUUUUS</p>
       <h1 class="text-5xl font-bold tracking-tight text-white">$ {{ totalRevenue }}</h1>
       <p class="text-sm text-zinc-600">{{ totalStores }}</p>
     </header>

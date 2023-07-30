@@ -29,18 +29,19 @@
 </template>
 
 <script setup lang="ts">
-import FireUser from '@/models/user'
 import { useToast } from '@/composables/toast'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCrypto } from '@/composables/crypto'
 import { testApiKey } from '@/services/apiService'
 import { useStorage } from '@/composables/storage'
+import { useFireUser } from '@/composables/fireUser'
 
 const { encrypt } = useCrypto()
 const router = useRouter()
 const { showToast } = useToast()
 const storage = useStorage()
+const { init, save, fireUser } = useFireUser()
 // TODO fix this
 const api_key = ref(import.meta.env.VITE_API_KEY || '')
 const error = ref(false)
@@ -60,12 +61,12 @@ const testKey = async (api_key: string) => {
     }
     let enc = await encrypt(api_key, import.meta.env.VITE_SECRET)
     await storage.set('API_KEY', enc)
-    let user = await FireUser.init({
+    await init({
       // @ts-ignore
       id: Number(data.data.id)
     })
-    await user.save()
-    return user
+    await save()
+    return fireUser
   } catch (e) {
     console.log(e)
     // @ts-ignore

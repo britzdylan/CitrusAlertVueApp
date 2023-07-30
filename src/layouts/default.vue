@@ -21,6 +21,7 @@ import { usePopup } from '@/composables/popup'
 import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from '@/composables/toast'
+import { useNotifications } from '@/composables/notifications'
 
 const { popup } = usePopup()
 const store = useLemonStore()
@@ -31,6 +32,8 @@ onMounted(async () => {
   await store.startLoading()
   try {
     await store.getAllData()
+    // check notifications here
+    useNotifications()
   } catch (e) {
     showToast('Something went wrong please try again', 'error')
     console.log(e)
@@ -38,6 +41,7 @@ onMounted(async () => {
   }
   if (!store.isAuthenticated) {
     router.replace('/home')
+    // check notifications here
     return
   }
   await store.stopLoading()

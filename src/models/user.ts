@@ -1,35 +1,19 @@
 import { db } from '@/firebase'
-import {
-  doc,
-  getDoc,
-  setDoc,
-  deleteDoc,
-  query,
-  collection,
-  where,
-  getDocs
-} from 'firebase/firestore'
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 
-interface NewUserPayload {
+interface Payload {
   id: number
   api_key?: string
   notif_token?: string
-  webhook_id?: string
-}
-
-interface UserPayload {
-  id: number
-  api_key: string
-  notif_token: string
-  webhook_id: string
+  webhooks?: string[]
 }
 class FireUser {
   id: number = 0
   api_key: string = ''
   notif_token: string = ''
-  webhook_id: string = ''
+  webhooks: string[] = []
 
-  static async init(data: NewUserPayload): Promise<FireUser> {
+  static async init(data: Payload): Promise<FireUser> {
     const user = new FireUser()
     Object.assign(user, data)
     return user
@@ -50,31 +34,15 @@ class FireUser {
     }
   }
 
-  static getByLsUserId(ls_user_id: string): Promise<FireUser | null> {
-    return new Promise(async (resolve, reject) => {
-      const docRef = collection(db, 'users')
-      try {
-        const q = query(docRef, where('ls_user_id', '==', ls_user_id))
-        const users = await getDocs(q)
-        users.forEach((user) => {
-          resolve(user.data() as FireUser)
-        })
-      } catch (error) {
-        console.error('Error getting user: ', error)
-        reject(error)
-      }
-    })
-  }
-
-  async save(): Promise<void> {
+  async save(data?: Payload): Promise<void> {
     const docRef = doc(db, 'users', String(this.id))
     const payload = {
-      api_key: this.api_key,
-      notif_token: this.notif_token,
-      webhook_id: this.webhook_id
+      api_key: data?.api_key || this.api_key,
+      notif_token: data?.notif_token || this.notif_token,
+      webhook_id: data?.webhooks || this.webhooks
     }
     try {
-      await setDoc(docRef, Object.assign({}, payload))
+      await setDoc(docRef, payload)
     } catch (error) {
       console.error('Error saving user: ', error)
       throw error
@@ -91,14 +59,29 @@ class FireUser {
     }
   }
 
-  static async notificationUpdate(data: UserPayload): Promise<void> {
+  static async updateOrCreate<T extends Payload>(data: T): Promise<void> {
     try {
-      let user = await FireUser.init(data)
-      await user.save()
+      let user = await FireUser.get(data.id)
+      if (!user) {
+        user = await FireUser.init(data)
+        return await user.save()
+      }
+      return await user.save(data)
     } catch (error) {
-      console.error('Error running notification update for user: ', error)
+      console.error('Error running update for user: ', error)
       throw error
     }
+  }
+
+  static getApiKey(id: number): Promise<string | null> {
+    return new Promise(async (resolve, reject) => {
+      let key = await this.get(id)
+      if (!key) {
+        reject(null)
+      } else {
+        resolve(key.api_key)
+      }
+    })
   }
 }
 

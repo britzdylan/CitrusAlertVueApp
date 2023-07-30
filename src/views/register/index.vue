@@ -33,11 +33,18 @@ import FireUser from '@/models/user'
 import { useToast } from '@/composables/toast'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useApi } from '@/composables/api'
 import { useCrypto } from '@/composables/crypto'
+import { apiService } from '@/services/apiService'
+import { type User } from '@/types'
+
+interface RegistrationPayload {
+  id: number
+  api_key: string
+  notif_token?: string
+  webhook_id?: string
+}
 
 const { encrypt } = useCrypto()
-const { testApiKey } = useApi()
 const router = useRouter()
 
 const { showToast } = useToast()
@@ -52,16 +59,18 @@ const warning =
 
 const testKey = async (api_key: string) => {
   try {
-    const { data } = await testApiKey(api_key)
-    if (data) {
+    const data = await apiService.testApiKey(api_key)
+    if (data && apiService.isApiResponse<User>(data)) {
       showToast('API Key Verified', 'success')
     } else {
       throw new Error('Invalid API key')
     }
     const encrypted = await encrypt(api_key, import.meta.env.VITE_SECRET)
-    let user = await FireUser.init({ id: Number(data.id), api_key: encrypted })
-    await user.save()
-    return true
+    let user = await FireUser.updateOrCreate<RegistrationPayload>({
+      id: Number(data.data.id),
+      api_key: encrypted
+    })
+    return user
   } catch (e) {
     console.log(e)
     // @ts-ignore

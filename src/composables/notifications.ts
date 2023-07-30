@@ -8,13 +8,18 @@ import {
 import { LocalNotifications } from '@capacitor/local-notifications'
 import User from '@/models/user'
 import { useLemonStore } from '@/stores/lemon'
-import { useStorage } from '@/composables/storage'
+
+interface NotifPayload {
+  id: number
+  api_key?: string
+  notif_token: string
+  webhooks?: string[]
+}
 
 export function useNotifications() {
   const initialize = async () => {
-    const { user, deviceInfo } = useLemonStore()
-    const { get } = useStorage()
-    if (deviceInfo?.platform === 'web') return
+    const { user, deviceInfo, setupWebhooks } = useLemonStore()
+    if (deviceInfo?.platform === 'web') return true
     // Check permission
     const permission = await PushNotifications.checkPermissions()
     if (permission.receive === 'prompt') {
@@ -22,38 +27,54 @@ export function useNotifications() {
       await PushNotifications.requestPermissions()
     }
 
+    // TODO: if permission is denied then find user and delete notif_token && webhooks
+
+    if (permission.receive === 'denied') {
+      const u = await User.get(Number(user?.data?.id))
+      if (u) {
+        u.notif_token = ''
+        u.webhooks = []
+        await u.save(u)
+      }
+      alert('permission denied, please enable notifications in settings')
+    }
     // If on Android, check if notifications are enabled in system settings
     if (deviceInfo?.platform === 'android') {
       const notifEnabled = await LocalNotifications.checkPermissions()
       if (!notifEnabled) {
         // TODO: Show a message to the user explaining that they need to enable notifications
-        console.log('opening app settings')
+        alert('LocalNotifications permission denied, please enable notifications in app settings')
+        return
       }
     }
 
-    // Register with the Apple / Google push notification services
     PushNotifications.register()
 
-    // On success, we should be able to receive notifications
     PushNotifications.addListener('registration', async (token: Token) => {
-      // send token to store and save user in fireStore
-      // create webhook first
-      const encryptedKey = await get('api_key')
-      // User.notificationUpdate({
-      //   id: Number(user?.data?.id),
-      //   notif_token: token.value,
-      //   api_key: encryptedKey,
-      //   webhook_id:
-      // })
+      // updateOrCreate webhooks
+      try {
+        let u = await User.get(Number(user?.data?.id))
+        if (!u) throw new Error('User not found')
+        let result = await setupWebhooks(Number(user?.data?.id), u?.webhooks || [])
+        if (!result) throw new Error('Error setting up webhooks')
+        User.updateOrCreate<NotifPayload>({
+          id: Number(user?.data?.id),
+          notif_token: token.value,
+          // @ts-ignore
+          webhooks: result.data.map((webhook) => webhook.id)
+        })
+      } catch (error) {
+        // TODO: handle error
+        console.error(error)
+      }
+
       console.log('Push registration success, token: ' + token.value)
     })
 
-    // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError', (error: any) => {
       console.log('Error on registration: ' + JSON.stringify(error))
     })
 
-    // Show us the notification payload if the app is open on our device
     PushNotifications.addListener(
       'pushNotificationReceived',
       (notification: PushNotificationSchema) => {

@@ -6,7 +6,6 @@ import SalesView from '../views/sales/index.vue'
 import ProductsView from '../views/sales/sales.vue'
 import SubscriptionsView from '../views/sales/subscriptions.vue'
 import RegisterView from '../views/register/index.vue'
-import NotificationsView from '../views/notifications/index.vue'
 import PublicLayout from '../layouts/public.vue'
 import DefaultLayout from '../layouts/default.vue'
 
@@ -77,18 +76,18 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: RegisterView
-    },
-    {
-      path: '/notifications',
-      name: 'notifications',
-      meta: {
-        Layout: DefaultLayout
-      },
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: NotificationsView
     }
+    // {
+    //   path: '/notifications',
+    //   name: 'notifications',
+    //   meta: {
+    //     Layout: DefaultLayout
+    //   },
+    //   // route level code-splitting
+    //   // this generates a separate chunk (About.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: NotificationsView
+    // }
   ]
 })
 

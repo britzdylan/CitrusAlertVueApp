@@ -27,6 +27,7 @@ interface State {
   loading: boolean
   notificationEnabled: boolean | null
   deviceInfo: DeviceInfo | null
+  FireStoreUser: FireStoreUser | null
 }
 
 export const useLemonStore = defineStore('Lemon', {
@@ -39,7 +40,8 @@ export const useLemonStore = defineStore('Lemon', {
       lastFetch: null,
       loading: true,
       notificationEnabled: null,
-      deviceInfo: null
+      deviceInfo: null,
+      FireStoreUser: null
     }
   },
   getters: {
@@ -95,7 +97,7 @@ export const useLemonStore = defineStore('Lemon', {
       if (allWebhooks.some((w) => w instanceof Error)) throw allWebhooks
       if (allWebhooks.some((w) => 'status' in w)) {
         allWebhooks = allWebhooks.filter((w) => apiService.isApiResponse<Webhook>(w))
-        // TODO: cleanup firestore will old webhooks that are no longer needed (if any) - use the webhook id and a fbFunction
+        // TODO: cleanup firestore with old webhooks that are no longer needed (if any) - use the webhook id and a fbFunction
       }
 
       // @ts-ignore
@@ -113,19 +115,23 @@ export const useLemonStore = defineStore('Lemon', {
           {}
         )
 
-        return await Promise.all(
+        let result = await Promise.all(
           stores.map((store) => {
             const webhook = webhooksByStoreId[store.id]
             if (webhook) {
-              return this.updateWebhook(webhook.data.id, data, store.id)
+              return webhook
+              // return this.updateWebhook(webhook.data.id, data, store.id)
             } else {
               // handle the case where there's no webhook for a store
               return this.createWebhook(data, store.id)
             }
           })
         )
+
+        return result.some((r) => !apiService.isApiResponse<Webhook>(r)) ? false : result
       } else {
-        return await Promise.all(stores.map((store) => this.createWebhook(data, store.id)))
+        let result = await Promise.all(stores.map((store) => this.createWebhook(data, store.id)))
+        return result.some((r) => !apiService.isApiResponse<Webhook>(r)) ? false : result
       }
     },
     async getLocalData() {

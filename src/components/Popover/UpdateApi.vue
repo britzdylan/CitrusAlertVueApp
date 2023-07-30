@@ -17,13 +17,11 @@ import { useRouter, useRoute } from 'vue-router'
 import { usePopup } from '@/composables/popup'
 import { ref } from 'vue'
 import { useToast } from '@/composables/toast'
-import { useCitrus } from '@/composables/citrus'
 
 const { showToast } = useToast()
 const router = useRouter()
 const route = useRoute()
 const { closePopup } = usePopup()
-const { testKey } = useCitrus()
 
 const api_key = ref(import.meta.env.VITE_API_KEY)
 const loading = ref(false)
@@ -43,7 +41,7 @@ const register = async () => {
     loading.value = false
     return
   }
-  let result = await testKey(api_key.value)
+  let result = true
   if (result) {
     closePopup()
   } else {

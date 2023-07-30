@@ -1,14 +1,10 @@
 import { defineStore } from 'pinia'
-import { apiService } from '@/services/apiService'
-import { useToast } from '@/composables/toast'
+import { getData, postData, updateData, deleteData, isApiResponse } from '@/services/apiService'
 import { useStorage } from '@/composables/storage'
-import { useNotifications } from '@/composables/notifications'
 import { Device } from '@capacitor/device'
 import type { Webhook, Order, User, Store, ApiResponse, FireStoreUser, ApiError } from '@/types'
 
-const { showToast } = useToast()
 const { get, remove, set } = useStorage()
-const { getData, updateData, postData, deleteData } = apiService
 interface DeviceInfo {
   isVirtual: boolean
   manufacturer: string
@@ -79,6 +75,11 @@ export const useLemonStore = defineStore('Lemon', {
     }
   },
   actions: {
+    async runStoreSetup(getData: boolean = false) {
+      if (getData) {
+        await this.getAllData()
+      }
+    },
     async setupWebhooks(FireStoreUserId: number, webHooks: string[]) {
       const data = {
         url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${FireStoreUserId}`,
@@ -96,7 +97,7 @@ export const useLemonStore = defineStore('Lemon', {
       let allWebhooks = await Promise.all(webHooks.map(this.getWebHook))
       if (allWebhooks.some((w) => w instanceof Error)) throw allWebhooks
       if (allWebhooks.some((w) => 'status' in w)) {
-        allWebhooks = allWebhooks.filter((w) => apiService.isApiResponse<Webhook>(w))
+        allWebhooks = allWebhooks.filter((w) => isApiResponse<Webhook>(w))
         // TODO: cleanup firestore with old webhooks that are no longer needed (if any) - use the webhook id and a fbFunction
       }
 
@@ -128,10 +129,10 @@ export const useLemonStore = defineStore('Lemon', {
           })
         )
 
-        return result.some((r) => !apiService.isApiResponse<Webhook>(r)) ? false : result
+        return result.some((r) => !isApiResponse<Webhook>(r)) ? false : result
       } else {
         let result = await Promise.all(stores.map((store) => this.createWebhook(data, store.id)))
-        return result.some((r) => !apiService.isApiResponse<Webhook>(r)) ? false : result
+        return result.some((r) => !isApiResponse<Webhook>(r)) ? false : result
       }
     },
     async getLocalData() {
@@ -168,12 +169,18 @@ export const useLemonStore = defineStore('Lemon', {
       } else {
         await remove('citrus_data')
         const modeledData = await this.refreshData()
+        console.log('Data fetched from API', modeledData)
         const modeledDataKeys = Object.keys(modeledData) as (keyof typeof modeledData)[]
 
         if (modeledDataKeys.some((e) => modeledData[e] instanceof Error)) {
           throw new Error('Some data is an error')
         }
 
+        if (modeledDataKeys.some((e) => modeledData[e] === null)) {
+          console.log('some data is null', modeledData)
+          throw new Error('Some data is null')
+        }
+        // @ts-ignore
         if (modeledDataKeys.some((e) => 'status' in modeledData[e])) {
           throw new Error('Some data not found')
         }
@@ -187,12 +194,13 @@ export const useLemonStore = defineStore('Lemon', {
     },
     async refreshData() {
       const data = await Promise.all([
-        this.fetchUser(),
-        this.fetchStores(),
-        this.fetchOrders(),
-        this.fetchSubscriptions(),
-        this.fetchDeviceInfo()
+        await this.fetchUser(),
+        await this.fetchStores(),
+        await this.fetchOrders(),
+        await this.fetchSubscriptions(),
+        await this.fetchDeviceInfo()
       ])
+      console.log('refreshData', data)
       // @ts-ignore
       const [user, stores, orders, subscriptions] = data
       const modeledData = {
@@ -211,37 +219,46 @@ export const useLemonStore = defineStore('Lemon', {
       this.deviceInfo = res
     },
     async fetchUser() {
-      return apiService
-        .getData<User>('users/me')
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        let r = await getData<User>('users/me')
+        console.log('user-store-action', r)
+        return r
+      } catch (error) {
+        console.log('user-store-action-error', error)
+
+        return error as ApiError
+      }
     },
     async fetchStores() {
-      return apiService
-        .getData<Store[]>('stores')
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        return await getData<Store[]>('stores')
+      } catch (error) {
+        return error as ApiError
+      }
     },
 
     async fetchOrders() {
-      return apiService
-        .getData<Order[]>('orders?page[size]=100')
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        return await getData<Order[]>('orders?page[size]=100')
+      } catch (error) {
+        return error as ApiError
+      }
     },
 
     async fetchSubscriptions() {
-      return apiService
-        .getData<Order[]>('subscriptions')
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        return await getData<Order[]>('subscriptions')
+      } catch (error) {
+        return error as ApiError
+      }
     },
 
     async getWebHook(id: string) {
-      return apiService
-        .getData<Webhook>(`webhooks/${id}`)
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        return await getData<Webhook>(`webhooks/${id}`)
+      } catch (error) {
+        return error as ApiError
+      }
     },
 
     async createWebhook(payload: any, storeId: string) {
@@ -259,10 +276,11 @@ export const useLemonStore = defineStore('Lemon', {
           }
         }
       }
-      return apiService
-        .postData<Webhook>('webhooks', webhook)
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        return await postData<Webhook>('webhooks', webhook)
+      } catch (error) {
+        return error as ApiError
+      }
     },
 
     async updateWebhook(id: string, payload: any, storeId: string) {
@@ -281,17 +299,19 @@ export const useLemonStore = defineStore('Lemon', {
           }
         }
       }
-      return apiService
-        .postData<Webhook>('webhooks', webhook)
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        return await postData<Webhook>('webhooks', webhook)
+      } catch (error) {
+        return error as ApiError
+      }
     },
 
     async deleteWebhook(id: string) {
-      return apiService
-        .deleteData(`webhooks/${id}`)
-        .then((data) => data)
-        .catch((error) => error as ApiError)
+      try {
+        return await deleteData(`webhooks/${id}`)
+      } catch (error) {
+        return error as ApiError
+      }
     },
 
     async startLoading() {

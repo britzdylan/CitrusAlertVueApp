@@ -1,15 +1,14 @@
 import { defineStore } from 'pinia'
-import { useApi } from '@/composables/api'
+import { apiService } from '@/services/apiService'
 import { useToast } from '@/composables/toast'
 import { useStorage } from '@/composables/storage'
 import { useNotifications } from '@/composables/notifications'
 import { Device } from '@capacitor/device'
-import type { Webhook, Order, User, Store, ApiResponse } from '@/types'
+import type { Webhook, Order, User, Store, ApiResponse, FireStoreUser, ApiError } from '@/types'
 
-const { getData, postData, deleteData, updateData } = useApi()
 const { showToast } = useToast()
 const { get, remove, set } = useStorage()
-
+const { getData, updateData, postData, deleteData } = apiService
 interface DeviceInfo {
   isVirtual: boolean
   manufacturer: string
@@ -24,7 +23,6 @@ interface State {
   stores: ApiResponse<Store[]> | null
   orders: ApiResponse<Order[]> | null
   subscriptions: ApiResponse<Order[]> | null
-  webhooks: ApiResponse<Webhook[]> | null
   lastFetch: Date | null
   loading: boolean
   notificationEnabled: boolean | null
@@ -38,7 +36,6 @@ export const useLemonStore = defineStore('Lemon', {
       stores: null,
       orders: null,
       subscriptions: null,
-      webhooks: null,
       lastFetch: null,
       loading: true,
       notificationEnabled: null,
@@ -75,64 +72,60 @@ export const useLemonStore = defineStore('Lemon', {
         meta: state.subscriptions?.meta
       }
     },
-    allWebhooks: (state) => {
-      return { webhooks: state.webhooks?.data, meta: state.webhooks?.meta }
-    },
     allStores: (state) => {
       return { stores: state.stores?.data, meta: state.stores?.meta }
     }
   },
   actions: {
-    async setupWebhooks(id: number) {
-      // const secret = () => {
-      //   let result = ''
-      //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-      //   const charactersLength = characters.length
-      //   for (let i = 0; i < 5; i++) {
-      //     result += characters.charAt(Math.floor(Math.random() * charactersLength))
-      //   }
-      //   return `${result}-${id}`
-      // }
+    async setupWebhooks(FireStoreUserId: number, webHooks: string[]) {
       const data = {
-        url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${id}`,
+        url: import.meta.env.VITE_FIREBASE_WEBHOOK_URL + `?id=${FireStoreUserId}`,
         events: ['order_created', 'subscription_created'],
         secret: import.meta.env.VITE_WEBHOOK_SECRET,
         // @ts-ignore
         test_mode: process.env.NODE_ENV === 'development'
       }
-      console.log(data)
 
       // loop through stores and create webhooks
       const stores = this.stores?.data
-      if (!stores) return
+      if (!stores) throw new Error('No stores found')
 
       // find webhooks
-      const allWebhooks = await this.fetchWebhooks()
+      let allWebhooks = await Promise.all(webHooks.map(this.getWebHook))
+      if (allWebhooks.some((w) => w instanceof Error)) throw allWebhooks
+      if (allWebhooks.some((w) => 'status' in w)) {
+        allWebhooks = allWebhooks.filter((w) => apiService.isApiResponse<Webhook>(w))
+        // TODO: cleanup firestore will old webhooks that are no longer needed (if any) - use the webhook id and a fbFunction
+      }
 
-      if (allWebhooks instanceof Error) return allWebhooks
+      // @ts-ignore
+      if (process.env.NODE_ENV === 'development') {
+        console.log('all webhooks', allWebhooks)
+      }
 
-      const found = allWebhooks?.data?.find(
-        (webhook: Webhook) => webhook.id === import.meta.env.VITE_WEBHOOK_URL
-      )
-      console.log(found)
+      if (allWebhooks.length > 0) {
+        const webhooksByStoreId = allWebhooks.reduce<{ [key: string]: ApiResponse<Webhook> }>(
+          (acc, webhook) => {
+            // @ts-ignore
+            acc[webhook.data.attributes.store_id] = webhook
+            return acc
+          },
+          {}
+        )
 
-      // if no webhooks found, create a new webhook
-      if (!found) {
-        // create webhook
-        const webhooks = await Promise.all(
-          stores.map(async (store: Store) => {
-            return await this.createWebhook(data, store.id)
+        return await Promise.all(
+          stores.map((store) => {
+            const webhook = webhooksByStoreId[store.id]
+            if (webhook) {
+              return this.updateWebhook(webhook.data.id, data, store.id)
+            } else {
+              // handle the case where there's no webhook for a store
+              return this.createWebhook(data, store.id)
+            }
           })
         )
-        return webhooks
       } else {
-        // update webhook
-        const webhooks = await Promise.all(
-          stores.map(async (store: Store) => {
-            return await this.updateWebhook(found.id, data, store.id)
-          })
-        )
-        return webhooks
+        return await Promise.all(stores.map((store) => this.createWebhook(data, store.id)))
       }
     },
     async getLocalData() {
@@ -140,6 +133,20 @@ export const useLemonStore = defineStore('Lemon', {
       if (localData) {
         const data = JSON.parse(localData)
         console.log('Data fetched from local storage', data)
+        // chekc if any of the keys are null
+        const keys = Object.keys(data)
+        const nullKeys = keys.filter((key) => data[key] === null)
+        if (nullKeys.length > 0) {
+          console.log('null keys found', nullKeys)
+          return false
+        }
+        // check if lastFetch is more than 1 day old
+        const now = new Date()
+        const lastFetch = new Date(data.lastFetch)
+        if (Math.floor(Math.abs(now.getTime() - lastFetch.getTime()) / 1000 / 60) > 1440) {
+          console.log('last fetch is more than 1 day old')
+          return false
+        }
         return data
       }
       return false
@@ -155,45 +162,38 @@ export const useLemonStore = defineStore('Lemon', {
       } else {
         await remove('citrus_data')
         const modeledData = await this.refreshData()
-        const modeledDataKeys = Object.keys(modeledData)
-        // @ts-ignore
+        const modeledDataKeys = Object.keys(modeledData) as (keyof typeof modeledData)[]
+
         if (modeledDataKeys.some((e) => modeledData[e] instanceof Error)) {
-          throw modeledData
+          throw new Error('Some data is an error')
+        }
+
+        if (modeledDataKeys.some((e) => 'status' in modeledData[e])) {
+          throw new Error('Some data not found')
         }
         modeledDataKeys.forEach((key) => {
           // @ts-ignore
           this[key] = modeledData[key]
         })
-        // await set('citrus_data', JSON.stringify(modeledData))
+        await set('citrus_data', JSON.stringify(modeledData))
         return true
       }
     },
     async refreshData() {
-      // const now = new Date()
-      // const lastFetch = new Date(localData.lastFetch)
-      // const diff = Math.abs(now.getTime() - lastFetch.getTime())
-      // const minutes = Math.floor(diff / 1000 / 60)
-
-      // if (minutes < 0) {
-      //   return true
-      // }
-
       const data = await Promise.all([
         this.fetchUser(),
         this.fetchStores(),
         this.fetchOrders(),
         this.fetchSubscriptions(),
-        this.fetchWebhooks(),
         this.fetchDeviceInfo()
       ])
       // @ts-ignore
-      const [user, stores, orders, subscriptions, webhooks] = data
+      const [user, stores, orders, subscriptions] = data
       const modeledData = {
         user: user,
         stores: stores,
         orders: orders,
         subscriptions: subscriptions,
-        webhooks: webhooks,
         lastFetch: new Date()
       }
 
@@ -204,59 +204,38 @@ export const useLemonStore = defineStore('Lemon', {
       const res = await Device.getInfo()
       this.deviceInfo = res
     },
-    async fetchUser(): Promise<ApiResponse<User> | Error> {
-      try {
-        const data = await getData<User>('users/me')
-        if (!data) throw new Error('No user found or invalid api key')
-        this.user = data
-        return data
-      } catch (error: any) {
-        return error
-      }
+    async fetchUser() {
+      return apiService
+        .getData<User>('users/me')
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
-    async fetchStores(): Promise<ApiResponse<Store[]> | Error> {
-      try {
-        const data = await getData<Store[]>('stores')
-        if (!data) return new Error('No stores found or invalid api key')
-        this.stores = data
-        return data
-      } catch (error: any) {
-        // @ts-ignore
-        return error
-      }
+    async fetchStores() {
+      return apiService
+        .getData<Store[]>('stores')
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
 
-    async fetchOrders(): Promise<ApiResponse<Order[]> | Error> {
-      try {
-        const data = await getData<Order[]>('orders?page[size]=100')
-        if (!data) return new Error('No orders found or invalid api key')
-        this.orders = data
-        return data
-      } catch (error: any) {
-        // @ts-ignore
-        return error
-      }
+    async fetchOrders() {
+      return apiService
+        .getData<Order[]>('orders?page[size]=100')
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
 
-    async fetchSubscriptions(): Promise<ApiResponse<Order[]> | Error> {
-      try {
-        const data = await getData<Order[]>('subscriptions')
-        if (!data) throw new Error('No subscriptions found or invalid api key')
-        this.subscriptions = data
-        return data
-      } catch (error: any) {
-        return error
-      }
+    async fetchSubscriptions() {
+      return apiService
+        .getData<Order[]>('subscriptions')
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
-    async fetchWebhooks(): Promise<ApiResponse<Webhook[]> | Error> {
-      try {
-        const data = await getData<Webhook[]>('webhooks')
-        if (!data) throw new Error('No webhooks found or invalid api key')
-        this.webhooks = data
-        return data
-      } catch (error: any) {
-        return error
-      }
+
+    async getWebHook(id: string) {
+      return apiService
+        .getData<Webhook>(`webhooks/${id}`)
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
 
     async createWebhook(payload: any, storeId: string) {
@@ -274,16 +253,10 @@ export const useLemonStore = defineStore('Lemon', {
           }
         }
       }
-
-      try {
-        const { data } = await postData('webhooks', webhook)
-        if (!data) throw new Error('Error creating webhook or invalid api key')
-        return data
-      } catch (error) {
-        // @ts-ignore
-        showToast(error, 'error')
-        return null
-      }
+      return apiService
+        .postData<Webhook>('webhooks', webhook)
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
 
     async updateWebhook(id: string, payload: any, storeId: string) {
@@ -302,39 +275,19 @@ export const useLemonStore = defineStore('Lemon', {
           }
         }
       }
-      try {
-        const { data } = await updateData(`webhooks/${id}`, webhook)
-        if (!data) throw new Error('Error updating webhook or invalid api key')
-        return data
-      } catch (error) {
-        // @ts-ignore
-        showToast(error, 'error')
-        return null
-      }
+      return apiService
+        .postData<Webhook>('webhooks', webhook)
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
 
     async deleteWebhook(id: string) {
-      try {
-        const res = await deleteData(`webhooks/${id}`)
-        if (res) showToast('Webhook deleted', 'success')
-        return true
-      } catch (error) {
-        // @ts-ignore
-        showToast(error, 'error')
-        return null
-      }
+      return apiService
+        .deleteData(`webhooks/${id}`)
+        .then((data) => data)
+        .catch((error) => error as ApiError)
     },
-    async getWebHook(id: string) {
-      try {
-        const { data } = await getData<Webhook>(`webhooks/${id}`)
-        if (!data) throw new Error('No webhook found or invalid api key')
-        return data
-      } catch (error) {
-        // @ts-ignore
-        showToast(error, 'error')
-        return null
-      }
-    },
+
     async startLoading() {
       this.loading = true
       return true

@@ -156,6 +156,10 @@ export class ApiService {
       headers: { ...this.header, Authorization: `Bearer ${token}` }
     });
   }
+
+  public  isApiResponse<T>(object: any): object is ApiResponse<T> {
+    return 'meta' in object && 'jsonapi' in object && 'links' in object && 'data' in object;
+  }
 }
 
 // Usage:

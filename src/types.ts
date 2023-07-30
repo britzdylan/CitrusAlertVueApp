@@ -133,9 +133,21 @@ export interface Store extends Base<StoreAttributes> {}
 
 export interface Webhook extends Base<WebhookAttributes> {}
 
+export interface FireStoreUser {
+  id: number
+  api_key: string
+  notif_token: string
+  webhook_id: string
+}
+
 export interface ApiResponse<T> {
   meta: Meta
   jsonapi: Jsonapi
   links: Links
   data: T
+}
+
+export interface ApiError {
+  status: string
+  message: string
 }

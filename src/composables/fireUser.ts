@@ -35,12 +35,8 @@ export function useFireUser() {
 
   const save = async (data?: Payload) => {
     const docRef = doc(db, 'users', String(data?.id))
-    const payload = {
-      notif_token: data?.notif_token || fireUser.value?.notif_token,
-      webhooks: data?.webhooks || fireUser.value?.webhooks
-    }
     try {
-      return await setDoc(docRef, payload)
+      return await setDoc(docRef, data)
     } catch (error) {
       console.error('Error saving fireUser: ', error)
       throw error
@@ -62,10 +58,9 @@ export function useFireUser() {
       let user = await get(data.id)
       console.log(user)
       if (!user) {
-        await init(data)
-        return await save()
+        return await save(data)
       }
-      return await save(data)
+      return await save({ ...user, ...data })
     } catch (error) {
       console.error('Error running update for fireUser: ', error)
       throw error

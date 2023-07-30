@@ -44,8 +44,6 @@ export function useNotifications() {
       }
     }
 
-    PushNotifications.register()
-
     PushNotifications.addListener('registration', async (token: Token) => {
       // updateOrCreate webhooks
       try {
@@ -85,6 +83,8 @@ export function useNotifications() {
         console.log('Push action performed: ' + JSON.stringify(notification))
       }
     )
+
+    PushNotifications.register()
   }
 
   return initialize

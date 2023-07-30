@@ -13,7 +13,9 @@ let userId = 0
 const token = async () => {
   const encryptedKey = await Preferences.get({ key: 'API_KEY' })
   // @ts-ignore
-  return cryptojs.AES.decrypt(encryptedKey.value, import.meta.env.VITE_SECRET).toString(cryptojs.enc.Utf8)
+  return cryptojs.AES.decrypt(encryptedKey.value, import.meta.env.VITE_SECRET).toString(
+    cryptojs.enc.Utf8
+  )
 }
 
 const url = async (id: string) => {
@@ -62,7 +64,6 @@ export const testApiKey = async (token: string): Promise<ApiResponse<User | null
 
 export const getData = async <T>(endPoint: string): Promise<ApiResponse<T> | ApiError> => {
   let t = await token()
-  console.log('token', t);
   return await fetchFromApi(await url(endPoint), {
     headers: {
       ...header,

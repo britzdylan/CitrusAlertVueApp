@@ -33,9 +33,10 @@ const runNotifications = useNotifications()
 onMounted(async () => {
   await store.startLoading()
   try {
-    await store.getAllData()
+    await store.getAllData().then(() => {
+      runNotifications()
+    })
     // check notifications here
-    runNotifications()
   } catch (e) {
     showToast('Something went wrong please try again', 'error')
     console.log(e)

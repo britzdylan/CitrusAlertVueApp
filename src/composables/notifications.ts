@@ -7,7 +7,7 @@ import {
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { useLemonStore } from '@/stores/lemon'
 import { useFireUser } from './fireUser'
-const { get, fireUser, save, updateOrCreate } = useFireUser()
+const { get, save, updateOrCreate } = useFireUser()
 
 export function useNotifications() {
   const initialize = async () => {
@@ -23,10 +23,10 @@ export function useNotifications() {
     // TODO: if permission is denied then find user and delete notif_token && webhooks
 
     if (permission.receive === 'denied') {
-      await get(Number(user?.data?.id))
-      if (fireUser) {
+      let u = await get(Number(user?.data?.id))
+      if (u) {
         let data = {
-          id: fireUser.value?.id || Number(user?.data?.id),
+          id: Number(user?.data?.id),
           notif_token: '',
           webhooks: []
         }
@@ -49,10 +49,11 @@ export function useNotifications() {
     PushNotifications.addListener('registration', async (token: Token) => {
       // updateOrCreate webhooks
       try {
-        get(Number(user?.data?.id))
-        let result = await setupWebhooks(Number(user?.data?.id), fireUser.value?.webhooks || [])
+        const fireUser = await get(Number(user?.data?.id))
+        console.log(fireUser)
+        let result = await setupWebhooks(Number(user?.data?.id), fireUser?.webhooks || [])
         if (!result) throw new Error('Error setting up webhooks')
-        updateOrCreate({
+        await updateOrCreate({
           id: Number(user?.data?.id),
           notif_token: token.value,
           // @ts-ignore

@@ -61,12 +61,7 @@ const testKey = async (api_key: string) => {
     }
     let enc = await encrypt(api_key, import.meta.env.VITE_SECRET)
     await storage.set('API_KEY', enc)
-    await init({
-      // @ts-ignore
-      id: Number(data.data.id)
-    })
-    await save()
-    return fireUser
+    return true
   } catch (e) {
     console.log(e)
     // @ts-ignore

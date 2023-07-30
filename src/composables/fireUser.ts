@@ -19,10 +19,13 @@ export function useFireUser() {
     const docRef = doc(db, 'users', String(id))
     try {
       const userDoc = await getDoc(docRef)
+      console.log('userDoc', userDoc)
       if (userDoc.exists()) {
         fireUser.value = userDoc.data() as Payload
+        return userDoc.data()
       } else {
         fireUser.value = null
+        return null
       }
     } catch (error) {
       console.error('Error getting fireUser: ', error)
@@ -31,13 +34,13 @@ export function useFireUser() {
   }
 
   const save = async (data?: Payload) => {
-    const docRef = doc(db, 'users', String(fireUser.value?.id))
+    const docRef = doc(db, 'users', String(data?.id))
     const payload = {
       notif_token: data?.notif_token || fireUser.value?.notif_token,
-      webhook_id: data?.webhooks || fireUser.value?.webhooks
+      webhooks: data?.webhooks || fireUser.value?.webhooks
     }
     try {
-      await setDoc(docRef, payload)
+      return await setDoc(docRef, payload)
     } catch (error) {
       console.error('Error saving fireUser: ', error)
       throw error
@@ -56,8 +59,9 @@ export function useFireUser() {
 
   const updateOrCreate = async <T extends Payload>(data: T) => {
     try {
-      await get(data.id)
-      if (!fireUser.value) {
+      let user = await get(data.id)
+      console.log(user)
+      if (!user) {
         await init(data)
         return await save()
       }
@@ -68,7 +72,7 @@ export function useFireUser() {
     }
   }
 
-//
+  //
 
   return { fireUser, init, get, save, deleteDocRef, updateOrCreate }
 }

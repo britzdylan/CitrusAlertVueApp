@@ -87,19 +87,37 @@ export const useLemonStore = defineStore('Lemon', {
       // loop through stores and create webhooks
       const stores = this.stores?.data
       if (!stores) throw new Error('No stores found')
-
+      console.log(
+        'stores & Stores Setup Started ////////////////////////////////////////////////////////////'
+      )
+      console.table(stores)
+      console.table('Webhooks Table', webHooks)
+      console.log(
+        '//////////////////////////////////////////////////////////////////////////////////////////'
+      )
       // find webhooks
-      let allWebhooks = await Promise.all(webHooks.map(this.getWebHook))
-      console.log('all webhooks', allWebhooks)
+      let allWebhooks = await Promise.all(
+        webHooks.map(async (webhook) => await this.getWebHook(webhook))
+      )
+      console.log(
+        'Fetced webhooks from API /////////////////////////////////////////////////////////////////////'
+      )
+      console.table(allWebhooks)
+      console.log(
+        '//////////////////////////////////////////////////////////////////////////////////////////'
+      )
+
       if (allWebhooks.some((w) => w instanceof Error)) throw allWebhooks
-      if (allWebhooks.some((w) => 'status' in w)) {
-        allWebhooks = allWebhooks.filter((w) => isApiResponse<Webhook>(w))
-        // TODO: cleanup firestore with old webhooks that are no longer needed (if any) - use the webhook id and a fbFunction
-      }
+      // @ts-ignore
+      allWebhooks = allWebhooks.filter((w) => !w.status)
+      // if (allWebhooks.some((w) => w.status)) {
+      //   // @ts-ignore
+      //   // TODO: cleanup firestore with old webhooks that are no longer needed (if any) - use the webhook id and a fbFunction
+      // }
 
       // @ts-ignore
       if (process.env.NODE_ENV === 'development') {
-        console.log('all webhooks', allWebhooks)
+        // console.log('all webhooks', allWebhooks)
       }
 
       if (allWebhooks.length > 0) {
@@ -124,8 +142,8 @@ export const useLemonStore = defineStore('Lemon', {
             }
           })
         )
-
-        return result.some((r) => !isApiResponse<Webhook>(r)) ? false : result
+        // @ts-ignore
+        return result.some((r) => r.status) ? false : result
       } else {
         let result = await Promise.all(
           stores.map(async (store) => await this.createWebhook(data, store.id))

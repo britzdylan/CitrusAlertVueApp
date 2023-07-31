@@ -114,6 +114,39 @@ interface StoreAttributes extends BaseAttributes {
   thirty_day_revenue: number
 }
 
+export interface CustomerAttributes extends BaseAttributes {
+  store_id: number
+  name: string
+  email: string
+  status: string
+  city: string | null
+  region: string | null
+  country: string
+  total_revenue_currency: number
+  mrr: number
+  status_formatted: string
+  country_formatted: string
+  total_revenue_currency_formatted: string
+  mrr_formatted: string
+}
+
+export interface ProductAttributes extends BaseAttributes {
+  store_id: number
+  name: string
+  slug: string
+  description: string
+  status: string
+  status_formatted: string
+  thumb_url: string
+  large_thumb_url: string
+  price: number
+  pay_what_you_want: boolean
+  from_price: number | null
+  to_price: number | null
+  buy_now_url: string
+  price_formatted: string
+}
+
 export interface WebhookAttributes extends BaseAttributes {
   url: string
   events: string[]
@@ -127,11 +160,15 @@ export interface Order extends Base<OrderAttributes> {
   store: Store
 }
 
+export interface Customer extends Base<CustomerAttributes> {}
+
 export interface User extends Base<UserAttributes> {}
 
 export interface Store extends Base<StoreAttributes> {}
 
 export interface Webhook extends Base<WebhookAttributes> {}
+
+export interface Product extends Base<ProductAttributes> {}
 
 export interface FireStoreUser {
   id: number

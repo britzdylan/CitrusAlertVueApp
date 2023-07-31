@@ -12,7 +12,7 @@
       helper="Your API key is top secret and we take extra precautions to keep it safe. Do not share it with anyone."
       placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
     />
-    <Footer class="!absolute left-0 right-0 mt-auto mb-20">
+    <Footer class="mt-auto !static w-full !p-0 !pb-4">
       <Button @click="showPopup('update-api')" class="btn btn-primary w-full">
         Update my API key
       </Button>

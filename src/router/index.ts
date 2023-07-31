@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SplashView from '../views/index.vue'
-import HomeView from '../views/home.vue'
+import WelcomeView from '../views/welcome.vue'
 import SettingsView from '../views/settings/index.vue'
-import SalesView from '../views/sales/index.vue'
-import ProductsView from '../views/sales/sales.vue'
-import SubscriptionsView from '../views/sales/subscriptions.vue'
+import OrdersView from '../views/orders/index.vue'
+import DashboardView from '../views/dashboard.vue'
+import CustomersView from '../views/customers/index.vue'
 import RegisterView from '../views/register/index.vue'
+
 import PublicLayout from '../layouts/public.vue'
 import DefaultLayout from '../layouts/default.vue'
 
@@ -21,12 +22,45 @@ const router = createRouter({
       }
     },
     {
-      path: '/home',
-      name: 'home',
-      component: HomeView,
+      path: '/welcome',
+      name: 'welcome',
+      component: WelcomeView,
       meta: {
         Layout: PublicLayout
       }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      meta: {
+        Layout: PublicLayout
+      },
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: RegisterView
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      meta: {
+        Layout: DefaultLayout
+      },
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: DashboardView
+    },
+    {
+      path: '/customers',
+      name: 'customers',
+      meta: {
+        Layout: DefaultLayout
+      },
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: CustomersView
     },
     {
       path: '/settings',
@@ -40,43 +74,32 @@ const router = createRouter({
       }
     },
     {
-      path: '/sales',
-      name: 'products',
+      path: '/orders',
+      name: 'orders',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: SalesView,
+      component: OrdersView,
       meta: {
         Layout: DefaultLayout
-      },
-      children: [
-        {
-          path: '',
-          name: 'products',
-          component: ProductsView
-        },
-        {
-          path: 'subscriptions',
-          name: 'subscriptions',
-          // route level code-splitting
-          // this generates a separate chunk (About.[hash].js) for this route
-          // which is lazy-loaded when the route is visited.
-          component: SubscriptionsView
-        }
-      ]
-    },
-
-    {
-      path: '/register',
-      name: 'register',
-      meta: {
-        Layout: PublicLayout
-      },
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: RegisterView
+      }
+      // children: [
+      //   {
+      //     path: '',
+      //     name: 'products',
+      //     component: ProductsView
+      //   },
+      //   {
+      //     path: 'subscriptions',
+      //     name: 'subscriptions',
+      //     // route level code-splitting
+      //     // this generates a separate chunk (About.[hash].js) for this route
+      //     // which is lazy-loaded when the route is visited.
+      //     component: SubscriptionsView
+      //   }
+      // ]
     }
+
     // {
     //   path: '/notifications',
     //   name: 'notifications',

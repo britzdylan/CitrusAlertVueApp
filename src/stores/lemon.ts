@@ -2,7 +2,17 @@ import { defineStore } from 'pinia'
 import { getData, postData, updateData, deleteData, isApiResponse } from '@/services/apiService'
 import { useStorage } from '@/composables/storage'
 import { Device } from '@capacitor/device'
-import type { Webhook, Order, User, Store, ApiResponse, FireStoreUser, ApiError } from '@/types'
+import type {
+  Webhook,
+  Order,
+  User,
+  Store,
+  ApiResponse,
+  FireStoreUser,
+  ApiError,
+  Customer,
+  Product
+} from '@/types'
 
 const { get, remove, set } = useStorage()
 interface DeviceInfo {
@@ -19,6 +29,8 @@ interface State {
   stores: ApiResponse<Store[]> | null
   orders: ApiResponse<Order[]> | null
   subscriptions: ApiResponse<Order[]> | null
+  customers: ApiResponse<Customer[]> | null
+  products: ApiResponse<Product[]> | null
   lastFetch: Date | null
   loading: boolean
   notificationEnabled: boolean | null
@@ -33,6 +45,8 @@ export const useLemonStore = defineStore('Lemon', {
       stores: null,
       orders: null,
       subscriptions: null,
+      products: null,
+      customers: null,
       lastFetch: null,
       loading: true,
       notificationEnabled: null,
@@ -72,6 +86,12 @@ export const useLemonStore = defineStore('Lemon', {
     },
     allStores: (state) => {
       return { stores: state.stores?.data, meta: state.stores?.meta }
+    },
+    allCustomers: (state) => {
+      return { customers: state.customers?.data, meta: state.customers?.meta }
+    },
+    allProducts: (state) => {
+      return { products: state.products?.data, meta: state.stores?.meta }
     }
   },
   actions: {
@@ -216,16 +236,20 @@ export const useLemonStore = defineStore('Lemon', {
         await this.fetchStores(),
         await this.fetchOrders(),
         await this.fetchSubscriptions(),
+        await this.fetchCustomers(),
+        await this.fetchProducts(),
         await this.fetchDeviceInfo()
       ])
       console.log('refreshData', data)
       // @ts-ignore
-      const [user, stores, orders, subscriptions] = data
+      const [user, stores, orders, subscriptions, customers, products] = data
       const modeledData = {
         user: user,
         stores: stores,
         orders: orders,
         subscriptions: subscriptions,
+        customers: customers,
+        products: products,
         lastFetch: new Date()
       }
 
@@ -236,6 +260,8 @@ export const useLemonStore = defineStore('Lemon', {
       const res = await Device.getInfo()
       this.deviceInfo = res
     },
+    // USER /////////////////////////////////////////////////////////////////////////////
+
     async fetchUser() {
       try {
         let r = await getData<User>('users/me')
@@ -247,6 +273,8 @@ export const useLemonStore = defineStore('Lemon', {
         return error as ApiError
       }
     },
+    // STORES /////////////////////////////////////////////////////////////////////////////
+
     async fetchStores() {
       try {
         return await getData<Store[]>('stores')
@@ -254,6 +282,7 @@ export const useLemonStore = defineStore('Lemon', {
         return error as ApiError
       }
     },
+    // ORDERS /////////////////////////////////////////////////////////////////////////////
 
     async fetchOrders() {
       try {
@@ -262,6 +291,7 @@ export const useLemonStore = defineStore('Lemon', {
         return error as ApiError
       }
     },
+    // SUBSCRIPTIONS /////////////////////////////////////////////////////////////////////////////
 
     async fetchSubscriptions() {
       try {
@@ -270,6 +300,23 @@ export const useLemonStore = defineStore('Lemon', {
         return error as ApiError
       }
     },
+    // CUSTOEMRS /////////////////////////////////////////////////////////////////////////////
+    async fetchCustomers() {
+      try {
+        return await getData<Customer[]>('customers')
+      } catch (error) {
+        return error as ApiError
+      }
+    },
+    // PRODUCTS /////////////////////////////////////////////////////////////////////////////
+    async fetchProducts() {
+      try {
+        return await getData<Product[]>('products')
+      } catch (error) {
+        return error as ApiError
+      }
+    },
+    // WEBHOOKS /////////////////////////////////////////////////////////////////////////////
 
     async getWebHook(id: string) {
       try {
@@ -331,6 +378,8 @@ export const useLemonStore = defineStore('Lemon', {
         return error as ApiError
       }
     },
+
+    // UTILITIES /////////////////////////////////////////////////////////////////////////////
 
     async startLoading() {
       this.loading = true

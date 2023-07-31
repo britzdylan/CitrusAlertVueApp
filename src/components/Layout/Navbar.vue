@@ -1,19 +1,24 @@
 <template>
-  <nav
-    class="tabs grid grid-cols-4 tabs-zinc-mobile tabs-zinc-bordered tabs-mobile bg-primary-50 rounded-t-2xl"
-  >
-    <button @click="router.push('/sales')" :class="getActiveTab('sales')">
+  <nav class="tabs grid grid-cols-5 tabs-zinc-navigation tabs-mobile bg-zinc-800 pb-10">
+    <button @click="router.push('/dashboard')" :class="getActiveTab('dashboard')">
       <svg width="24" height="24">
-        <use xlink:href="/tabler-sprite.svg#tabler-report-money" />
+        <use xlink:href="/tabler-sprite.svg#tabler-layout-grid" />
       </svg>
-      Sales
+      Dashboard
     </button>
 
-    <button @click="router.push('/notifications')" :class="getActiveTab('notifications')">
+    <button @click="router.push('/orders')" :class="getActiveTab('orders')">
       <svg width="24" height="24">
-        <use xlink:href="/tabler-sprite.svg#tabler-bell" />
+        <use xlink:href="/tabler-sprite.svg#tabler-box-seam" />
       </svg>
-      Notifications
+      Orders
+    </button>
+
+    <button @click="router.push('/customers')" :class="getActiveTab('customers')">
+      <svg width="24" height="24">
+        <use xlink:href="/tabler-sprite.svg#tabler-user" />
+      </svg>
+      Customers
     </button>
 
     <button @click="router.push('/settings')" :class="getActiveTab('settings')">
@@ -52,7 +57,11 @@ const getActiveTab = (cP: string) => {
   }
 }
 
-.tabs-zinc-bordered button.active {
-  @apply text-primary-700 border-primary-500;
+button.active {
+  @apply text-zinc-100;
+}
+
+button {
+  @apply text-zinc-400;
 }
 </style>

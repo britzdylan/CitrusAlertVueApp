@@ -39,7 +39,7 @@
   }
 
   .screen {
-    @apply flex flex-col items-center flex-grow px-4 pb-20 overflow-x-hidden;
+    @apply flex flex-col items-center flex-grow px-4 pb-28 overflow-x-hidden;
   }
 
   .card {

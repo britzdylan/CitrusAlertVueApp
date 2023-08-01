@@ -43,7 +43,11 @@
   }
 
   .card {
-    @apply bg-white border border-zinc-200 rounded-lg p-6 flex flex-col;
+    @apply bg-white border border-zinc-200 rounded p-6 flex flex-col relative;
+  }
+
+  .btn-primary {
+    @apply !bg-primary-800;
   }
 }
 

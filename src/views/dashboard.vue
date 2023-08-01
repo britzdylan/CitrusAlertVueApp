@@ -4,19 +4,19 @@
       <p v class="text-body-xl font-bold">Dashboard</p>
     </header>
     <section id="stats" class="w-full grid grid-cols-2 gap-3">
-      <div class="p-4 rounded-lg border-primary-600 border bg-primary-600 text-white flex flex-col">
+      <div class="p-4 rounded-lg border-primary-800 border bg-primary-800 text-white flex flex-col">
         <p class="text-headline-sm font-bold leading-tight">${{ totalRevenue }}</p>
         <p class="text-body-sm font-light">Total Earned</p>
       </div>
-      <div class="p-4 rounded-lg border-secondary-200 border bg-secondary-50 flex flex-col">
+      <div class="p-4 rounded-lg border-secondary-100 border bg-secondary-50 flex flex-col">
         <p class="text-headline-sm font-bold leading-tight">{{ totalCustomers }}</p>
         <p class="text-body-sm font-light">Total Customers</p>
       </div>
-      <div class="p-4 rounded-lg border-secondary-200 border bg-secondary-50 flex flex-col">
+      <div class="p-4 rounded-lg border-secondary-100 border bg-secondary-50 flex flex-col">
         <p class="text-headline-sm font-bold leading-tight">{{ totalOrders }}</p>
         <p class="text-body-sm font-light">Total Orders</p>
       </div>
-      <div class="p-4 rounded-lg border-secondary-200 border bg-secondary-50 flex flex-col">
+      <div class="p-4 rounded-lg border-secondary-100 border bg-secondary-50 flex flex-col">
         <p class="text-headline-sm font-bold leading-tight">{{ totalProducts }}</p>
         <p class="text-body-sm font-light">Total Products</p>
       </div>
@@ -40,7 +40,7 @@
           </p>
         </div>
         <div class="flex flex-col gap-0 col-span-4">
-          <p class="text-body-sm font-bold text-primary-600">
+          <p class="text-body-sm font-bold text-primary-800">
             +{{ item.attributes.total_formatted }}
           </p>
         </div>
@@ -50,7 +50,7 @@
           :title="item.attributes.user_name"
           target="_blank"
         >
-          <Button class="btn-text btn-text-tertiary text-xs !p-1 !gap-0"
+          <Button class="btn-text btn-text-zinc text-xs !p-1 !gap-0"
             >Receipt
 
             <svg width="24" height="24">

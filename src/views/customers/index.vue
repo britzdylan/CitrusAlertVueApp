@@ -7,7 +7,7 @@
     <section class="w-full flex flex-col gap-4 relative pb-8 pt-4">
       <div
         v-for="item in allCustomers"
-        class="grid grid-cols-12 gap-1 border-b-[0.5px] items-center border-zinc-200"
+        class="flex justify-between gap-1 border-b-[0.5px] items-center border-zinc-200"
       >
         <!-- <div class="avatar avatar-rounded mr-1">
           <img src="/apple-touch-icon-180x180.png" />
@@ -18,14 +18,9 @@
             {{ item.attributes.email }}
           </p>
         </div>
-        <div class="flex flex-col gap-0 col-span-3">
-          <p class="text-body-sm font-bold text-primary-600">
+        <div class="flex gap-1 items-center col-span-3 tooltip">
+          <p class="text-body-sm font-bold">
             ${{ item.attributes.total_revenue_currency_formatted }}
-          </p>
-        </div>
-        <div class="col-span-3">
-          <p class="text-body-sm font-bold text-secondary-600">
-            {{ item.attributes.country }}
           </p>
         </div>
       </div>
@@ -35,6 +30,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { ref } from 'vue'
 import { useLemonStore } from '@/stores/lemon'
 
 const store = useLemonStore()
@@ -42,6 +38,12 @@ const store = useLemonStore()
 const allCustomers = computed(() => {
   return store.allCustomers.customers
 })
+
+const showTooltip = ref(false)
+
+const toggleTooltip = () => {
+  showTooltip.value = !showTooltip.value
+}
 </script>
 
 <style scoped></style>

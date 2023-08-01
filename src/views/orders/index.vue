@@ -19,7 +19,7 @@
           </p>
         </div>
         <div class="flex flex-col gap-0 col-span-4">
-          <p class="text-body-sm font-bold text-primary-600">
+          <p class="text-body-sm font-bold text-primary-800">
             +{{ item.attributes.total_formatted }}
           </p>
         </div>
@@ -29,7 +29,7 @@
           :title="item.attributes.user_name"
           target="_blank"
         >
-          <Button class="btn-text btn-text-tertiary text-xs !p-1 !gap-0"
+          <Button class="btn-text btn-text-zinc text-xs !p-1 !gap-0"
             >Receipt
 
             <svg width="24" height="24">

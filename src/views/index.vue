@@ -18,10 +18,10 @@ onMounted(async () => {
     await store.getAllData()
   } catch (e) {
     console.log(e)
-    router.replace('/home')
+    router.replace('/welcome')
   }
   if (store.isAuthenticated) {
-    router.replace('/sales')
+    router.replace('/dashboard')
     return
   }
   await store.stopLoading()

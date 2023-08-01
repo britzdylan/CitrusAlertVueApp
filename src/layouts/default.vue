@@ -6,6 +6,7 @@
     <UpdateApi v-if="popup == 'update-api'" />
     <More v-if="popup == 'more'" />
     <Support v-if="popup == 'support'" />
+    <DeleteAccount v-if="popup == 'delete-account'" />
 
     <slot v-if="!loading" />
     <Loader v-else />
@@ -22,6 +23,7 @@ import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from '@/composables/toast'
 import { useNotifications } from '@/composables/notifications'
+import DeleteAccount from '@/components/Popover/DeleteAccount.vue'
 
 const { popup } = usePopup()
 const store = useLemonStore()

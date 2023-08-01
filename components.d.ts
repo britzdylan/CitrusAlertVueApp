@@ -12,6 +12,7 @@ declare module 'vue' {
     Blanket: typeof import('./src/components/Popover/blanket.vue')['default']
     Button: typeof import('./src/components/UI/button.vue')['default']
     Confirm: typeof import('./src/components/Popover/Confirm.vue')['default']
+    DeleteAccount: typeof import('./src/components/Popover/DeleteAccount.vue')['default']
     Footer: typeof import('./src/components/Layout/footer.vue')['default']
     Input: typeof import('./src/components/UI/input.vue')['default']
     List: typeof import('./src/components/UI/List/List.vue')['default']

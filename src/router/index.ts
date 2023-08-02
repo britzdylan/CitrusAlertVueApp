@@ -1,11 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SplashView from '../views/index.vue'
-import WelcomeView from '../views/welcome.vue'
 import SettingsView from '../views/settings/index.vue'
 import OrdersView from '../views/orders/index.vue'
 import DashboardView from '../views/dashboard.vue'
 import CustomersView from '../views/customers/index.vue'
-import RegisterView from '../views/register/index.vue'
 
 import PublicLayout from '../layouts/public.vue'
 import DefaultLayout from '../layouts/default.vue'
@@ -14,9 +11,17 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('../views/404.vue'),
+      meta: {
+        Layout: PublicLayout
+      }
+    },
+    {
       path: '/',
       name: 'splash',
-      component: SplashView,
+      component: () => import('../views/index.vue'),
       meta: {
         Layout: PublicLayout
       }
@@ -24,7 +29,7 @@ const router = createRouter({
     {
       path: '/welcome',
       name: 'welcome',
-      component: WelcomeView,
+      component: () => import('../views/welcome.vue'),
       meta: {
         Layout: PublicLayout
       }
@@ -38,7 +43,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: RegisterView
+      component: () => import('../views/register/index.vue')
     },
     {
       path: '/dashboard',
@@ -83,34 +88,7 @@ const router = createRouter({
       meta: {
         Layout: DefaultLayout
       }
-      // children: [
-      //   {
-      //     path: '',
-      //     name: 'products',
-      //     component: ProductsView
-      //   },
-      //   {
-      //     path: 'subscriptions',
-      //     name: 'subscriptions',
-      //     // route level code-splitting
-      //     // this generates a separate chunk (About.[hash].js) for this route
-      //     // which is lazy-loaded when the route is visited.
-      //     component: SubscriptionsView
-      //   }
-      // ]
     }
-
-    // {
-    //   path: '/notifications',
-    //   name: 'notifications',
-    //   meta: {
-    //     Layout: DefaultLayout
-    //   },
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: NotificationsView
-    // }
   ]
 })
 

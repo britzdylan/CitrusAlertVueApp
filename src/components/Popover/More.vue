@@ -8,24 +8,28 @@
       </svg>
     </Button>
     <img class="w-32 h-32" src="@/assets/logo_white.svg" />
+    <p>Developed and Maintained by Dylan Britz</p>
     <a
-      href="/"
+      href="https://twitter.com/britzdm"
       target="_blank"
-      class="mb-auto flex items-center gap-3 justify-center w-full text-2xl"
+      class="mb-auto flex items-center gap-3 justify-center w-full"
     >
-      <p>Follow us on</p>
+      <p>Follow me on</p>
       <svg width="24" height="24">
         <use xlink:href="/tabler-sprite.svg#tabler-brand-twitter" />
       </svg>
     </a>
     <SupportLink class="text-white" />
-    <small>Please rate our app</small>
+    <small>V {{ version }}</small>
   </div>
 </template>
 
 <script setup lang="ts">
 import { usePopup } from '@/composables/popup'
+import pacakgeJson from '../../../package.json'
 const { closePopup } = usePopup()
+
+const version = pacakgeJson.version
 </script>
 
 <style scoped></style>

@@ -1,7 +1,7 @@
 <template>
   <div :class="isOpen" class="accordion accordion-zinc accordion-zinc-open">
     <header @click="open = !open">
-      <p>{{ accordion.title }}</p>
+      <p class="text-base">{{ accordion.title }}</p>
       <svg
         :class="open ? 'rotate-90' : ''"
         class="transition-all ease-linear duration-300"

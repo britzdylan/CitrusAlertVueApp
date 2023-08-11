@@ -75,6 +75,8 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLemonStore } from '@/stores/lemon'
 
+import { SplashScreen } from '@capacitor/splash-screen'
+await SplashScreen.hide()
 const store = useLemonStore()
 const router = useRouter()
 

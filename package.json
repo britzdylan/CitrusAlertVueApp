@@ -1,12 +1,12 @@
 {
   "name": "citrusalertvueapp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "SET VITE_PLATFORM=web&& vite",
-    "app-dev": "SET VITE_PLATFORM=native&&SET VITE_SERVER=true&&SET HOST=172.27.16.1&&vite",
+    "app-dev": "SET VITE_PLATFORM=native&&SET VITE_SERVER=true&&SET HOST=172.30.96.1&&vite",
     "build-native": "SET VITE_PLATFORM=native&& SET HOST=localhost&&run-p type-check build",
-    "build-live-reload": "SET VITE_PLATFORM=native&& SET VITE_SERVER=true&&SET APP_HOST=http://172.27.16.1:3000&&run-p type-check build",
+    "build-live-reload": "SET VITE_PLATFORM=native&& SET VITE_SERVER=true&&SET APP_HOST=http://172.30.96.1:3000&&run-p type-check build",
     "preview": "vite preview",
     "build": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",

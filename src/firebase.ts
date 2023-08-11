@@ -4,6 +4,7 @@ import { getAnalytics } from 'firebase/analytics'
 import { getFirestore } from 'firebase/firestore'
 
 export const firebaseApp = initializeApp({
+  apiKey: import.meta.env.VITE_FIREBASE_apiKey,
   authDomain: import.meta.env.VITE_FIREBASE_authDomain,
   databaseURL: import.meta.env.VITE_FIREBASE_databaseURL,
   projectId: import.meta.env.VITE_FIREBASE_projectId,

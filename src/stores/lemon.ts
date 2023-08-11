@@ -214,10 +214,6 @@ export const useLemonStore = defineStore('Lemon', {
           throw new Error('Some data is an error')
         }
 
-        if (modeledDataKeys.some((e) => modeledData[e] === null)) {
-          console.log('some data is null', modeledData)
-          throw new Error('Some data is null')
-        }
         // @ts-ignore
         if (modeledDataKeys.some((e) => 'status' in modeledData[e])) {
           throw new Error('Some data not found')

@@ -45,7 +45,7 @@ onMounted(async () => {
     router.replace('/welcome')
   }
   if (!store.isAuthenticated) {
-    router.replace('/')
+    router.replace('/welcome')
     // check notifications here
     return
   }

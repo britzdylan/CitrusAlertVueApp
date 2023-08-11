@@ -1,5 +1,5 @@
 <template>
-  <nav class="tabs grid grid-cols-5 tabs-zinc-navigation tabs-mobile bg-zinc-800 pb-10">
+  <nav class="tabs grid grid-cols-5 tabs-zinc-navigation tabs-mobile bg-zinc-800 pb-8">
     <button @click="router.push('/dashboard')" :class="getActiveTab('dashboard')">
       <svg width="24" height="24">
         <use xlink:href="/tabler-sprite.svg#tabler-layout-grid" />
@@ -9,7 +9,7 @@
 
     <button @click="router.push('/orders')" :class="getActiveTab('orders')">
       <svg width="24" height="24">
-        <use xlink:href="/tabler-sprite.svg#tabler-box-seam" />
+        <use xlink:href="/tabler-sprite.svg#tabler-box-seam" />yarn build
       </svg>
       Orders
     </button>

@@ -1,15 +1,12 @@
 <template>
   <Confirm
-    confirm="Delete"
-    cancel="Cancel"
-    @confirm="deleteAccount"
     class="gap-2"
     title="Delete your account"
     description="Your account will be deleted and all of your data will be removed from our servers."
   >
     <div class="flex items-stretch gap-1 mt-4">
-      <Button @click=";('close')" class="btn btn-min btn-min-zinc w-full"> Cancel </Button>
-      <Button class="btn btn-red w-full"> Delete </Button>
+      <Button @click="closePopup" class="btn btn-min btn-min-zinc w-full"> Cancel </Button>
+      <Button @click="deleteAccount" class="btn btn-red w-full"> Delete </Button>
     </div>
   </Confirm>
 </template>
@@ -19,11 +16,13 @@ import { useLemonStore } from '@/stores/lemon'
 import { useFireUser } from '@/composables/fireUser'
 import { useStorage } from '@/composables/storage'
 import { useRouter } from 'vue-router'
-
+import { usePopup } from '@/composables/popup'
 const { get, deleteDocRef } = useFireUser()
 const router = useRouter()
 const { remove } = useStorage()
 const store = useLemonStore()
+const { closePopup } = usePopup()
+
 const deleteAccount = async () => {
   console.log('delete account')
   await store.startLoading()
@@ -31,11 +30,12 @@ const deleteAccount = async () => {
   try {
     let user = await get(Number(store.user?.data.id))
     if (user) {
-      await Promise.all(
+      const res = await Promise.all(
         user.webhooks?.map(async (w: string) => {
           await store.deleteWebhook(w)
         })
       )
+      console.log(res)
       await remove('citrus_data')
       await remove('API_KEY')
       await deleteDocRef()

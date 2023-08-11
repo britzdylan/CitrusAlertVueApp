@@ -42,10 +42,10 @@ onMounted(async () => {
   } catch (e) {
     showToast('Something went wrong please try again', 'error')
     console.log(e)
-    router.replace('/')
+    router.replace('/welcome')
   }
   if (!store.isAuthenticated) {
-    router.replace('/home')
+    router.replace('/')
     // check notifications here
     return
   }

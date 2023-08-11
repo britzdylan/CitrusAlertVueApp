@@ -1,6 +1,6 @@
 {
   "name": "citrusalertvueapp",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "SET VITE_PLATFORM=web&& vite",
@@ -24,6 +24,7 @@
     "@capacitor/local-notifications": "^5.0.6",
     "@capacitor/preferences": "^5.0.5",
     "@capacitor/push-notifications": "^5.0.6",
+    "@capacitor/splash-screen": "^5.0.6",
     "@lemonsqueezy/lemonsqueezy.js": "^1.0.3",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.9",

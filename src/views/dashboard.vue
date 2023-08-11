@@ -60,7 +60,7 @@
         </a>
       </div>
     </section>
-    <Button @click="router.replace('/orders')" class="z-20 w-full btn-text btn-text-secondary mb-4"
+    <Button @click="router.replace('/orders')" class="w-full btn-text btn-text-secondary mb-4"
       >View More
 
       <svg width="24" height="24">

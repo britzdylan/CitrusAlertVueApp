@@ -1,6 +1,6 @@
 {
   "name": "citrusalertvueapp",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "scripts": {
     "dev": "SET VITE_PLATFORM=web&& vite",

@@ -6,6 +6,7 @@
     <UpdateApi v-if="popup == 'update-api'" />
     <More v-if="popup == 'more'" />
     <Support v-if="popup == 'support'" />
+    <Privacy v-if="popup == 'privacy'" />
     <DeleteAccount v-if="popup == 'delete-account'" />
     <div
       ref="dragAlert"

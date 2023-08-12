@@ -22,6 +22,7 @@ declare module 'vue' {
     Navbar: typeof import('./src/components/Layout/Navbar.vue')['default']
     Pill: typeof import('./src/components/UI/pill.vue')['default']
     PricingToggle: typeof import('./src/components/UI/pricingToggle.vue')['default']
+    Privacy: typeof import('./src/components/Popover/Privacy.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SalesCard: typeof import('./src/components/Sales/SalesCard.vue')['default']

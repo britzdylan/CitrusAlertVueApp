@@ -23,20 +23,15 @@
         >
       </p>
     </section>
-    <header class="relative gap-4 flex items-center w-full mt-8">
-      <p class="text-body font-bold">Terms of service</p>
-    </header>
-    <section class="w-full">
-      <a href="https://lemonsqueezy.app/terms" class="text-primary link justify-start w-full"
-        >Privacy Policy</a
-      >
+    <section class="w-full mt-auto">
+      <p @click="showPopup('privacy')" class="justify-start w-full mt-auto text-xs text-center">Privacy Policy</p>
     </section>
   </section>
 </template>
 
 <script setup lang="ts">
 import { usePopup } from '@/composables/popup'
-const { closePopup } = usePopup()
+const { closePopup, showPopup } = usePopup()
 
 const faqs = [
   {

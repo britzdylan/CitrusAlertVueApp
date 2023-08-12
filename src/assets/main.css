@@ -43,7 +43,7 @@
   }
 
   .card {
-    @apply bg-white border border-zinc-200 rounded p-6 flex flex-col relative;
+    @apply bg-white border border-zinc-200 rounded p-6 flex flex-col relative overflow-y-scroll max-h-[80%p];
   }
 
   .btn-primary {

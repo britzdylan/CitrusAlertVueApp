@@ -36,5 +36,5 @@ module.exports = {
       }
     }
   },
-  plugins: [require('cabana-ui')]
+  plugins: [require('@tailwindcss/typography'), require('cabana-ui')]
 }

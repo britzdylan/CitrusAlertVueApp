@@ -12,7 +12,7 @@ export function useRegister() {
   const { showToast } = useToast()
   const storage = useStorage()
   // TODO fix this
-  const api_key = ref(import.meta.env.VITE_API_KEY || '')
+  const api_key = ref('')
   const error = ref(false)
   const loading = ref(false)
 

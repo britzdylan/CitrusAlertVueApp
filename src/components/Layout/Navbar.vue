@@ -1,5 +1,5 @@
 <template>
-  <nav class="tabs grid grid-cols-5 tabs-zinc-navigation tabs-mobile bg-zinc-800 pb-8">
+  <nav class="tabs grid grid-cols-5 tabs-zinc-navigation tabs-mobile bg-zinc-800 pb-4 px-2">
     <button @click="router.push('/dashboard')" :class="getActiveTab('dashboard')">
       <svg width="24" height="24">
         <use xlink:href="/tabler-sprite.svg#tabler-layout-grid" />

@@ -196,7 +196,8 @@ export const useLemonStore = defineStore('Lemon', {
       }
       return false
     },
-    async getAllData(): Promise<boolean> {
+    async getAllData(reset: boolean = false): Promise<boolean> {
+      if (reset) await remove('citrus_data')
       const localData = await this.getLocalData()
       if (localData) {
         Object.keys(localData).forEach((key) => {

@@ -25,46 +25,47 @@
     <header class="w-full h-8">
       <p class="text-body-sm font-bold">Recent Orders</p>
     </header>
-    <section class="w-full flex flex-col gap-4 relative pb-8 pt-4">
+    <section class="w-full flex flex-col gap-4 relative pb-2 pt-4">
       <div
         v-for="item in allOrders"
-        class="grid grid-cols-12 gap-1 border-b-[0.5px] items-center border-zinc-200"
+        class="grid grid-cols-12 gap-1 border-b-[0.5px] items-center border-zinc-200 pb-1"
       >
         <!-- <div class="avatar avatar-rounded mr-1">
           <img src="/apple-touch-icon-180x180.png" />
         </div> -->
-        <div class="flex flex-col gap-0 col-span-4">
-          <p class="text-body-sm font-bold">{{ item.attributes.user_name }}</p>
-          <p class="text-xs font-light">
-            {{ new Date(item.attributes.created_at).toDateString() }}
-          </p>
-        </div>
-        <div class="flex flex-col gap-0 col-span-4">
-          <p class="text-body-sm font-bold text-primary-800">
-            +{{ item.attributes.total_formatted }}
-          </p>
-        </div>
-        <a
-          class="col-span-4 place-self-end"
-          :href="item.attributes.urls.receipt"
-          :title="item.attributes.user_name"
-          target="_blank"
-        >
-          <Button class="btn-text btn-text-zinc text-xs !p-1 !gap-0"
-            >Receipt
+        <p class="col-span-1 text-xs">#{{ item.attributes.order_number }}</p>
 
-            <svg width="24" height="24">
-              <use xlink:href="/tabler-sprite.svg#tabler-arrow-up-right" />
-            </svg>
-          </Button>
-        </a>
+        <div class="flex flex-col gap-0 col-span-5">
+          <p class="text-xs font-bold truncate whitespace-nowrap">
+            {{ item.attributes.first_order_item.product_name }}
+          </p>
+        </div>
+        <p class="text-xs font-light col-span-3 place-self-end">
+          {{ orderDate(item.attributes.created_at) }}
+        </p>
+        <div class="flex flex-col gap-0 col-span-3 place-self-end">
+          <p class="text-xs font-bold text-emerald-500">+{{ item.attributes.total_formatted }}</p>
+        </div>
       </div>
     </section>
     <Button @click="router.replace('/orders')" class="w-full btn-text btn-text-secondary mb-4"
       >View More
 
-      <svg width="24" height="24">
-        <use xlink:href="/tabler-sprite.svg#tabler-arrow-up-right" />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="icon icon-tabler icon-tabler-arrow-up-right"
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        stroke-width="1"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M17 7l-10 10"></path>
+        <path d="M8 7l9 0l0 9"></path>
       </svg>
     </Button>
   </section>
@@ -74,7 +75,12 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLemonStore } from '@/stores/lemon'
-
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+const orderDate = (date: string) => {
+  return dayjs(new Date(date)).fromNow()
+}
 const store = useLemonStore()
 const router = useRouter()
 

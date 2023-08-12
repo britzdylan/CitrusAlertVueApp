@@ -3,7 +3,7 @@
     <header class="relative gap-4 flex items-end w-full h-20">
       <p class="text-body-xl font-bold">Account Settings</p>
     </header>
-    <section class="w-full flex flex-col gap-4">
+    <section class="w-full flex flex-col gap-4 flex-grow">
       <div class="flex items-center justify-between gap-1 border-b pb-1 border-zinc-200">
         <div class="flex flex-col gap-1 col-span-4">
           <p class="text-body-sm font-bold">Update Lemon Squeezy API key</p>
@@ -31,6 +31,8 @@
           >More
         </Button>
       </div>
+
+      <h2 class="text-label mt-auto mb-auto text-center font-light text-slate-600"><b>Pro Tip:</b> <br /> Swipe down to sync your data from Lemon Squeezy</h2>
     </section>
   </section>
 </template>
